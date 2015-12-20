@@ -1,0 +1,16 @@
+Dear {{ username }},
+As a follow up to our mail on your resume being shortlisted, we are pleased to inform that your face to face interview has been scheduled. The details are mentioned below 
+
+Date : {{ date }} 
+Time : {{ time }} 
+Location: {{ location }} 
+Venue : {{ venue }} 
+
+You are required to be at the venue 30 mins before the interview time. Please come with original documents for your identification, qualification and work experience. 
+
+Looking forward to meeting you in person.
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

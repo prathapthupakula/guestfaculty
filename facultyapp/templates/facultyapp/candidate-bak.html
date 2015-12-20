@@ -1,0 +1,153 @@
+{% extends "admin/base_site.html" %}
+<div id="container">
+{% block content %}
+<form action="/faculty/get_candidate" method="post">
+    {% csrf_token %}
+
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+    {{ form.application_id.errors }}
+    <label for="{{ form.application_id.id_for_label }}">application_id:</label>
+    {{ form.application_id }}
+</div>
+<div class="fieldWrapper">
+    {{ form.pan_number.errors }}
+    <label for="{{ form.message.id_for_label }}">pan_number:</label>
+    {{ form.pan_number }}
+</div>
+<div class="fieldWrapper">
+    {{ form.name.errors }}
+    <label for="{{ form.name.id_for_label }}">name:</label>
+    {{ form.name }}
+</div>
+<div class="fieldWrapper">
+    {{ form.gender.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">gender</label>
+    {{ form.gender }}
+</div>
+<div class="fieldWrapper">
+    {{ form.date_of_birth.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">date_of_birth</label>
+    {{ form.date_of_birth }}
+</div>
+<div class="fieldWrapper">
+    {{ form.email.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">email</label>
+    {{ form.email }}
+</div>
+<div class="fieldWrapper">
+    {{ form.total_experience_in_months.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">total_experience_in_months</label>
+    {{ form.total_experience_in_months }}
+</div>
+<div class="fieldWrapper">
+    {{ form.phone.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">phone</label>
+    {{ form.phone }}
+</div>
+<div class="fieldWrapper">
+    {{ form.mobile.errors }}
+    <label for="{{ form.mobile.id_for_label }}">mobile</label>
+    {{ form.mobile }}
+</div>
+<div class="fieldWrapper">
+    {{ form.address1.errors }}
+    <label for="{{ form.address1.id_for_label }}">address1</label>
+    {{ form.address1 }}
+</div>
+<div class="fieldWrapper">
+    {{ form.teach_experience_in_months.errors }}
+    <label for="{{ form.teach_experience_in_months.id_for_label }}">teach_experience_in_months</label>
+    {{ form.teach_experience_in_months }}
+</div>
+<div class="fieldWrapper">
+    {{ form.current_organization.errors }}
+    <label for="{{ form.current_organization.id_for_label }}">current_organization</label>
+    {{ form.current_organization }}
+</div>
+<div class="fieldWrapper">
+    {{ form.current_org_designation.errors }}
+    <label for="{{ form.current_org_designation.id_for_label }}">current_org_designation</label>
+    {{ form.current_org_designation }}
+</div>
+<div class="fieldWrapper">
+    {{ form.months_in_curr_org.errors }}
+    <label for="{{ form.months_in_curr_org.id_for_label }}">months_in_curr_org</label>
+    {{ form.months_in_curr_org }}
+</div>
+<div class="fieldWrapper">
+    {{ form.current_location.errors }}
+    <label for="{{ form.current_location.id_for_label }}">current_location</label>
+    {{ form.current_location }}
+</div>
+<div class="fieldWrapper">
+    {{ form.application_status.errors }}
+    <label for="{{ form.application_status.id_for_label }}">application_status</label>
+    {{ form.application_status }}
+</div>
+<div class="fieldWrapper">
+    {{ form.reapplication.errors }}
+    <label for="{{ form.reapplication.id_for_label }}">reapplication</label>
+    {{ form.reapplication }}
+</div>
+<div class="fieldWrapper">
+    {{ form.received_status.errors }}
+    <label for="{{ form.received_status.id_for_label }}">received_status</label>
+    {{ form.received_status }}
+</div>
+<div class="fieldWrapper">
+    {{ form.application_ack_sent.errors }}
+    <label for="{{ form.application_ack_sent.id_for_label }}">application_ack_sent</label>
+    {{ form.application_ack_sent }}
+</div>
+<div class="fieldWrapper">
+    {{ form.application_submission_date.errors }}
+    <label for="{{ form.application_submission_date.id_for_label }}">application_submission_date</label>
+    {{ form.application_submission_date }}
+</div>
+<div class="fieldWrapper">
+    {{ form.applying_for_discipline.errors }}
+    <label for="{{ form.applying_for_discipline.id_for_label }}">applying_for_discipline</label>
+    {{ form.applying_for_discipline }}
+</div>
+<div class="fieldWrapper">
+    {{ form.uploaded_cv_file_name.errors }}
+    <label for="{{ form.uploaded_cv_file_name.id_for_label }}">uploaded_cv_file_name</label>
+    {{ form.uploaded_cv_file_name }}
+</div>
+<div class="fieldWrapper">
+    {{ form.industry_exp_in_months.errors }}
+    <label for="{{ form.industry_exp_in_months.id_for_label }}">industry_exp_in_months</label>
+    {{ form.industry_exp_in_months }}
+</div>
+<div class="fieldWrapper">
+    {{ form.nature_of_current_job.errors }}
+    <label for="{{ form.nature_of_current_job.id_for_label }}">nature_of_current_job</label>
+    {{ form.nature_of_current_job }}
+</div>
+<div class="fieldWrapper">
+    {{ form.areas_of_expertise.errors }}
+    <label for="{{ form.areas_of_expertise.id_for_label }}">areas_of_expertise</label>
+    {{ form.areas_of_expertise }}
+</div>
+<div class="fieldWrapper">
+    {{ form.certifications.errors }}
+    <label for="{{ form.certifications.id_for_label }}">certifications</label>
+    {{ form.certifications }}
+</div>
+<div class="fieldWrapper">
+    {{ form.awards_and_distinctions.errors }}
+    <label for="{{ form.awards_and_distinctions.id_for_label }}">awards_and_distinctions</label>
+    {{ form.awards_and_distinctions }}
+</div>
+<div class="fieldWrapper">
+    {{ form.publications.errors }}
+    <label for="{{ form.publications.id_for_label }}">publications</label>
+    {{ form.publications }}
+</div>
+{{ qualification_formset.as_table }}    
+<input type="submit" value="Submit" />
+</form>
+
+{% endblock %}
+</div>

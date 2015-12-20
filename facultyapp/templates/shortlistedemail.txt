@@ -1,0 +1,8 @@
+Dear {{ username }},
+We are pleased to inform you that you have been selected for being interviewed for the position of a guest faculty for BITS Work Integrated Learning Program. You will receive a separate mail intimating you about the date, time and venue of your interview.
+Thanks once again for your interest in the guest faculty role.
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

@@ -1,0 +1,8 @@
+Dear {{ username }},
+We are pleased to inform you that you have been assigned possible courses and programs we feel you will be suited for. 
+Please login for more details.
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

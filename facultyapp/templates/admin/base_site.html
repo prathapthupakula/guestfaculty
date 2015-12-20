@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{{ title }} | {{ site_title|default:_('Guest Faculty Application') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'gfapp:index' %}"><img src="{% static 'logo.gif' %}"></a></h1>
+{% endblock %}
+{% block nav-global %}
+<hr class=sep>
+{% endblock %}

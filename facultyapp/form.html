@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+<html lang="en-us" >
+<head>
+<base href="http://192.168.1.177:8000"
+<title>Add guest faculty candidate | Guest Faculty Online Application</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="/static/admin/css/ie.css" /><![endif]-->
+
+<script type="text/javascript">window.__admin_media_prefix__ = "/static/admin/";</script>
+<script type="text/javascript">window.__admin_utc_offset__ = "0";</script>
+
+<script type="text/javascript" src="/myadmin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+<script type="text/javascript" src="/static/admin/js/related-widget-wrapper.js"></script>
+<script type="text/javascript" src="/static/admin/js/inlines.js"></script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-facultyapp model-guestfacultycandidate change-form">
+
+<!-- Container -->
+<div id="container">
+
+    
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        
+<h1 id="site-name"><a href="/myadmin/">Guest Faculty Online Application</a></h1>
+
+        </div>
+        
+        
+        <div id="user-tools">
+            
+                Welcome,
+                <strong>admin</strong>.
+            
+            
+                
+                
+                    
+                    
+                
+                
+                <a href="/myadmin/password_change/">Change password</a> /
+                
+                <a href="/myadmin/logout/">Log out</a>
+            
+        </div>
+        
+        
+        
+    </div>
+    <!-- END Header -->
+    
+<div class="breadcrumbs">
+<a href="/myadmin/">Home</a>
+&rsaquo; <a href="/myadmin/facultyapp/">Facultyapp</a>
+&rsaquo; <a href="/myadmin/facultyapp/guestfacultycandidate/">Guest faculty candidates</a>
+&rsaquo; Add guest faculty candidate
+</div>
+
+    
+
+    
+        
+    
+
+    <!-- Content -->
+    <div id="content" class="colM">
+        
+        <h1>Add guest faculty candidate</h1>
+        <div id="content-main">
+
+
+
+<form enctype="multipart/form-data" action="" method="post" id="guestfacultycandidate_form" novalidate><input type='hidden' name='csrfmiddlewaretoken' value='BG7VJtLhvn0EFjLjrVS1wGLAvcd7HXKd' />
+<div>
+
+
+
+
+
+
+
+  <fieldset class="module aligned ">
+    
+    
+    
+        <div class="form-row field-pan_number">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_pan_number">Pan number:</label>
+                        
+                            <input class="vTextField" id="id_pan_number" maxlength="10" name="pan_number" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-name">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_name">Name:</label>
+                        
+                            <input class="vTextField" id="id_name" maxlength="200" name="name" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-gender">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_gender_0">Gender:</label>
+                        
+                            <ul class="radiolist inline" id="id_gender">
+<li><label for="id_gender_0"><input class="radiolist inline" id="id_gender_0" name="gender" type="radio" value="M" /> Male</label></li>
+<li><label for="id_gender_1"><input class="radiolist inline" id="id_gender_1" name="gender" type="radio" value="F" /> Female</label></li>
+</ul>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-date_of_birth">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_date_of_birth">Date of birth:</label>
+                        
+                            <input class="vDateField" id="id_date_of_birth" name="date_of_birth" size="10" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-email">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_email">Email:</label>
+                        
+                            <input class="vTextField" id="id_email" maxlength="100" name="email" type="email" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-total_experience_in_months">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_total_experience_in_months">Total experience in months:</label>
+                        
+                            <input class="vIntegerField" id="id_total_experience_in_months" name="total_experience_in_months" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-phone">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_phone">Phone:</label>
+                        
+                            <input class="vTextField" id="id_phone" maxlength="13" name="phone" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-mobile">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_mobile">Mobile:</label>
+                        
+                            <input class="vTextField" id="id_mobile" maxlength="13" name="mobile" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-address1">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_address1">Address1:</label>
+                        
+                            <input class="vTextField" id="id_address1" maxlength="500" name="address1" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-teach_experience_in_months">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_teach_experience_in_months">Teach experience in months:</label>
+                        
+                            <input class="vIntegerField" id="id_teach_experience_in_months" name="teach_experience_in_months" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-current_organization">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_current_organization">Current organization:</label>
+                        
+                            <input class="vTextField" id="id_current_organization" maxlength="100" name="current_organization" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-current_org_designation">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_current_org_designation">Current org designation:</label>
+                        
+                            <input class="vTextField" id="id_current_org_designation" maxlength="100" name="current_org_designation" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-months_in_curr_org">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_months_in_curr_org">Months in curr org:</label>
+                        
+                            <input class="vIntegerField" id="id_months_in_curr_org" name="months_in_curr_org" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-current_location">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_current_location">Current location:</label>
+                        
+                            
+<div class="related-widget-wrapper">
+    <select id="id_current_location" name="current_location">
+<option value="" selected="selected">---------</option>
+<option value="1">xcxcxsds</option>
+<option value="2">dsdsdsas</option>
+<option value="3">qwewqas</option>
+<option value="4">fdedfdfde</option>
+<option value="5">Madhapur</option>
+<option value="6">Kukatpallys</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-reapplication">
+            
+            
+                <div class="checkbox-row">
+                    
+                    
+                        <input id="id_reapplication" name="reapplication" type="checkbox" /><label class="vCheckboxLabel" for="id_reapplication">Reapplication</label>
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-received_status">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_received_status">Received status:</label>
+                        
+                            <input class="vIntegerField" id="id_received_status" name="received_status" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-application_ack_sent">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_application_ack_sent">Application ack sent:</label>
+                        
+                            <input class="vIntegerField" id="id_application_ack_sent" name="application_ack_sent" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-applying_for_discipline">
+            
+            
+                <div>
+                    
+                    
+                        <label class="required" for="id_applying_for_discipline">Applying for discipline:</label>
+                        
+                            
+<div class="related-widget-wrapper">
+    <select id="id_applying_for_discipline" name="applying_for_discipline">
+<option value="" selected="selected">---------</option>
+<option value="1">Discipline</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-uploaded_cv_file_name">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_uploaded_cv_file_name">Uploaded cv file name:</label>
+                        
+                            <input id="id_uploaded_cv_file_name" name="uploaded_cv_file_name" type="file" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-industry_exp_in_months">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_industry_exp_in_months">Industry exp in months:</label>
+                        
+                            <input class="vIntegerField" id="id_industry_exp_in_months" name="industry_exp_in_months" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-nature_of_current_job">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_nature_of_current_job">Nature of current job:</label>
+                        
+                            <input class="vTextField" id="id_nature_of_current_job" maxlength="200" name="nature_of_current_job" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-areas_of_expertise">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_areas_of_expertise">Areas of expertise:</label>
+                        
+                            <input class="vTextField" id="id_areas_of_expertise" maxlength="2000" name="areas_of_expertise" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-certifications">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_certifications">Certifications:</label>
+                        
+                            <input class="vTextField" id="id_certifications" maxlength="1000" name="certifications" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-awards_and_distinctions">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_awards_and_distinctions">Awards and distinctions:</label>
+                        
+                            <input class="vTextField" id="id_awards_and_distinctions" maxlength="1000" name="awards_and_distinctions" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-publications">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_publications">Publications:</label>
+                        
+                            <input class="vTextField" id="id_publications" maxlength="2000" name="publications" type="text" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-application_status">
+            
+            
+                <div>
+                    
+                    
+                        <label>Application status:</label>
+                        
+                            <p></p>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-application_submission_date">
+            
+            
+                <div>
+                    
+                    
+                        <label>Application submission date:</label>
+                        
+                            <p>(None)</p>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+</fieldset>
+
+
+
+
+
+
+
+
+    
+<div class="inline-group" id="candidatequalification_set-group">
+  <div class="tabular inline-related last-related">
+<input id="id_candidatequalification_set-TOTAL_FORMS" name="candidatequalification_set-TOTAL_FORMS" type="hidden" value="1" /><input id="id_candidatequalification_set-INITIAL_FORMS" name="candidatequalification_set-INITIAL_FORMS" type="hidden" value="0" /><input id="id_candidatequalification_set-MIN_NUM_FORMS" name="candidatequalification_set-MIN_NUM_FORMS" type="hidden" value="0" /><input id="id_candidatequalification_set-MAX_NUM_FORMS" name="candidatequalification_set-MAX_NUM_FORMS" type="hidden" value="1000" />
+<fieldset class="module">
+   <h2>Candidate Qualifications</h2>
+   
+   <table>
+     <thead><tr>
+     
+       
+         <th colspan="2" class="required">Degree
+         
+         </th>
+       
+     
+       
+         <th class="required">School/College
+         
+         </th>
+       
+     
+       
+         <th class="required">Discipline
+         
+         </th>
+       
+     
+       
+         <th class="required">Qualification
+         
+         </th>
+       
+     
+       
+         <th>Year of completion
+         
+         </th>
+       
+     
+       
+         <th class="required">% Marks/CPI/CGPA
+         
+         </th>
+       
+     
+       
+         <th class="required">Max Marks/CPI/CGPA
+         
+         </th>
+       
+     
+       
+         <th>Highest qualification
+         
+         </th>
+       
+     
+       
+         <th>Completed
+         
+         </th>
+       
+     
+     <th>Delete?</th>
+     </tr></thead>
+
+     <tbody>
+     
+        
+        <tr class="form-row row1 "
+             id="candidatequalification_set-0">
+        <td class="original">
+          
+          <input id="id_candidatequalification_set-0-id" name="candidatequalification_set-0-id" type="hidden" />
+          <input id="id_candidatequalification_set-0-application" name="candidatequalification_set-0-application" type="hidden" />
+          
+        </td>
+        
+          
+            
+              
+              <td class="field-degree_degree">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-0-degree_degree" name="candidatequalification_set-0-degree_degree">
+<option value="" selected="selected">---------</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-college">
+              
+                  
+                  <input class="vTextField" id="id_candidatequalification_set-0-college" maxlength="200" name="candidatequalification_set-0-college" type="text" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-discipline">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-0-discipline" name="candidatequalification_set-0-discipline">
+<option value="" selected="selected">---------</option>
+<option value="1">Discipline</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-qualification">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-0-qualification" name="candidatequalification_set-0-qualification">
+<option value="" selected="selected">---------</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-year_of_completion">
+              
+                  
+                  <input class="vIntegerField" id="id_candidatequalification_set-0-year_of_completion" name="candidatequalification_set-0-year_of_completion" type="text" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-percent_marks_cpi_cgpa">
+              
+                  
+                  <input id="id_candidatequalification_set-0-percent_marks_cpi_cgpa" name="candidatequalification_set-0-percent_marks_cpi_cgpa" step="0.00001" type="number" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-max_marks_cpi_cgpa">
+              
+                  
+                  <input id="id_candidatequalification_set-0-max_marks_cpi_cgpa" name="candidatequalification_set-0-max_marks_cpi_cgpa" step="0.00001" type="number" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-highest_qualification">
+              
+                  
+                  <input id="id_candidatequalification_set-0-highest_qualification" name="candidatequalification_set-0-highest_qualification" type="checkbox" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-completed">
+              
+                  
+                  <input id="id_candidatequalification_set-0-completed" name="candidatequalification_set-0-completed" type="checkbox" />
+              
+              </td>
+              
+            
+          
+        
+        
+          <td class="delete"></td>
+        
+        </tr>
+     
+        
+        <tr class="form-row row2  empty-form"
+             id="candidatequalification_set-empty">
+        <td class="original">
+          
+          <input id="id_candidatequalification_set-__prefix__-id" name="candidatequalification_set-__prefix__-id" type="hidden" />
+          <input id="id_candidatequalification_set-__prefix__-application" name="candidatequalification_set-__prefix__-application" type="hidden" />
+          
+        </td>
+        
+          
+            
+              
+              <td class="field-degree_degree">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-__prefix__-degree_degree" name="candidatequalification_set-__prefix__-degree_degree">
+<option value="" selected="selected">---------</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-college">
+              
+                  
+                  <input class="vTextField" id="id_candidatequalification_set-__prefix__-college" maxlength="200" name="candidatequalification_set-__prefix__-college" type="text" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-discipline">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-__prefix__-discipline" name="candidatequalification_set-__prefix__-discipline">
+<option value="" selected="selected">---------</option>
+<option value="1">Discipline</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-qualification">
+              
+                  
+                  
+<div class="related-widget-wrapper">
+    <select id="id_candidatequalification_set-__prefix__-qualification" name="candidatequalification_set-__prefix__-qualification">
+<option value="" selected="selected">---------</option>
+</select>
+    
+        
+        
+        
+    
+</div>
+
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-year_of_completion">
+              
+                  
+                  <input class="vIntegerField" id="id_candidatequalification_set-__prefix__-year_of_completion" name="candidatequalification_set-__prefix__-year_of_completion" type="text" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-percent_marks_cpi_cgpa">
+              
+                  
+                  <input id="id_candidatequalification_set-__prefix__-percent_marks_cpi_cgpa" name="candidatequalification_set-__prefix__-percent_marks_cpi_cgpa" step="0.00001" type="number" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-max_marks_cpi_cgpa">
+              
+                  
+                  <input id="id_candidatequalification_set-__prefix__-max_marks_cpi_cgpa" name="candidatequalification_set-__prefix__-max_marks_cpi_cgpa" step="0.00001" type="number" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-highest_qualification">
+              
+                  
+                  <input id="id_candidatequalification_set-__prefix__-highest_qualification" name="candidatequalification_set-__prefix__-highest_qualification" type="checkbox" />
+              
+              </td>
+              
+            
+          
+            
+              
+              <td class="field-completed">
+              
+                  
+                  <input id="id_candidatequalification_set-__prefix__-completed" name="candidatequalification_set-__prefix__-completed" type="checkbox" />
+              
+              </td>
+              
+            
+          
+        
+        
+          <td class="delete"></td>
+        
+        </tr>
+     
+     </tbody>
+   </table>
+</fieldset>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+(function($) {
+  $("#candidatequalification_set-group .tabular.inline-related tbody tr").tabularFormset({
+    prefix: "candidatequalification_set",
+    addText: "Add another Candidate qualification",
+    deleteText: "Remove"
+  });
+})(django.jQuery);
+</script>
+
+
+
+
+
+
+
+<div class="submit-row">
+<input type="submit" value="Save" class="default" name="_save" />
+
+
+<input type="submit" value="Save and add another" name="_addanother" />
+<input type="submit" value="Save and continue editing" name="_continue" />
+</div>
+
+
+
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function() {
+                $('.add-another').click(function(e) {
+                    e.preventDefault();
+                    showAddAnotherPopup(this);
+                });
+                $('.related-lookup').click(function(e) {
+                    e.preventDefault();
+                    showRelatedObjectLookupPopup(this);
+                });
+            
+                $('form#guestfacultycandidate_form :input:visible:enabled:first').focus()
+            
+            });
+        })(django.jQuery);
+    </script>
+
+
+
+
+<script type="text/javascript">
+(function($) {
+    var field;
+
+
+})(django.jQuery);
+</script>
+
+
+</div>
+</form></div>
+
+        
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>

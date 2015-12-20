@@ -1,0 +1,7 @@
+Dear {{ username }},
+Thank you for your interest in the guest faculty role in BITS. After our careful consideration of your consideration of your candidature, we regret to inform that you have not been chosen as a guest faculty in BITS. We appreciate your time and efforts spent.
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

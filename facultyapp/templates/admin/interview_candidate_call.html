@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+<script>
+  $(function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "1900:2012",
+      // You can put more options here.
+
+    });
+  });
+  </script>
+<h1>Please Fill in the following Fields for Interview Calls :</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+  {{ form.as_p }}
+
+    <p>Interview Calls will be sent to:</p>
+
+    <ul>
+    {% for candidate in candidates %}
+       {% if candidate.application_status == 'Shortlisted' %}
+	   <li> {{ candidate }} </li>
+	   <input type="hidden" name="_selected_action" value="{{ candidate.pk }}">
+	   {% endif %}
+    {% endfor %}
+	</ul>
+    <input type="hidden" name="action" value="interview_candidate_call" />
+    <input type="submit" name="update" value="Update" />
+</form>
+
+{% endblock %}

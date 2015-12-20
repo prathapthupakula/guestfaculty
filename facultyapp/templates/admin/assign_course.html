@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+<script>
+  $(function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "1900:2012",
+      // You can put more options here.
+
+    });
+  });
+  </script>
+<h1>Course Assignment:</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+    <ul>
+    {% for course in courses %}
+       {% if not course.assigned_count >= course.max_faculty_count %}
+	   <li> {{ course }} </li>
+	   <input type="hidden" name="_selected_action" value="{{ course.pk }}">
+	   {% endif %}
+    {% endfor %}
+	</ul>
+
+    <p><h3>Assign above Courses to:</h3></p>	
+
+  {{ form.as_p }}
+
+    <input type="hidden" name="action" value="assign_course" />
+    <input type="submit" name="update" value="Assign" />
+</form>
+
+{% endblock %}

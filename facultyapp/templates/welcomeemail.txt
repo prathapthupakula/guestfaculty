@@ -1,0 +1,7 @@
+Dear {{ username }},
+Thank you for applying for a guest faculty position in BITS Pilani Work Integrated Learning Programs. You application (No: {{ application_num }}) is successfully submitted and will be reviewed by the BITS Pilani soon. You will receive intimation emails when any interaction with BITS Pilani is scheduled. To track the status of your application, please use the following URL.
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

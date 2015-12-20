@@ -1,0 +1,221 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"><!--<![endif]-->
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Guest Faculty Portal</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="https://elearn.bits-pilani.ac.in/static/img/fav_site.png">
+
+        <link rel="stylesheet" href="{% static "bootstrap.min.css" %}">
+        <link href="{%static "font-awesome.min.css" %}" rel="stylesheet">
+        <style>
+        </style>
+        <link rel="stylesheet" href="{% static "bootstrap-theme.min.css" %}">
+        <link rel="stylesheet" href="{% static "main.css" %}">
+
+        <script src="{% static "pace.min.js" %}"></script>
+        <link rel="stylesheet" href="{% static "pace-theme-minimal.css" %}">
+        
+        
+
+        
+
+        <style type="text/css">
+
+
+          html,
+          body {
+            height: 100%;
+            background: url('/static/img/pattern.jpg')
+          }
+
+          .big_container{
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            margin: 0 auto -120px;
+            padding: 0 0 120px;
+          }
+
+          .spacer10{
+            height: 10px;
+          }
+          .spacer20{
+            height: 20px;
+          }
+          .spacer50{
+            height: 50px;
+          }
+
+          .header{
+            background: -webkit-linear-gradient(rgba(255,255,255,1), #F5F5F5); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(rgba(255,255,255,1), #F5F5F5); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(rgba(255,255,255,1), #F5F5F5); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(rgba(255,255,255,1), #F5F5F5); /* Standard syntax (must be last) */
+          }
+
+          .logo{
+            position:absolute;
+            left:3.5%;
+            top:3%;
+            width:18%;
+          }
+
+          .branding{
+            position:absolute;
+            top:3%;
+            width:18%;
+            right:3%;
+          }
+
+          .tri_clr_line_top{
+            position:absolute;
+            right:0px;
+            width:40%;
+            top:15%;
+          }
+
+          .footer{
+            background-color: #F5F5F5;
+            width:100%;
+            height: 110px;
+          }
+
+          .tri_clr_line_btm{
+            position: relative;
+            top: 0px;
+            width:560px;
+            z-index: -1;
+          }
+
+          .emblem{
+            width:250px;
+            margin-top: 3.5%;
+          }
+
+          .deemed{
+            margin-top: 6%;
+            font-size: 12px;
+          }
+
+          .developers_link{
+           font-size: 12px;
+          }
+
+          hr.sep{
+            margin:0;
+            border: 0;
+            height: 2px;
+            background: -webkit-linear-gradient(left, rgba(33,29,112,0)0%, rgba(33,29,112,1)50%, rgba(33,29,112,0)100%);
+            background: -moz-linear-gradient(left, rgba(33,29,112,0)0%, rgba(33,29,112,1)50%, rgba(33,29,112,0)100%);
+            background: -ms-linear-gradient(left, rgba(33,29,112,0)0%, rgba(33,29,112,1)50%, rgba(33,29,112,0)100%);
+            background: -o-linear-gradient(left, rgba(33,29,112,0)0%, rgba(33,29,112,1)50%, rgba(33,29,112,0)100%);
+          }
+
+        
+
+
+
+        
+        
+        </style>
+    </head>
+    <body class=" pace-done"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+    	<!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class="big_container">
+       	
+       	<div class="header">
+       		<div class="logo">
+       			<img style="width:100%" src="{% static "logo.gif" %}">
+       		</div>
+       		<div class="branding">
+       			<img style="width:100%" src="{% static "guestfaculty.png" %}">
+       		</div>
+       		<div class="tri_clr_line_top">
+       			<img style="width:100%" src="{% static "contentBg.gif" %}">
+       		</div>
+       		<div class="spacer50"></div>
+          <div class="spacer50"></div>
+          <div class="spacer20"></div>
+       	</div>
+        <hr class="sep">
+       	
+
+       	
+       	
+
+       	
+<div class="container">
+{{ content }}
+  <div class="spacer50"></div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div id="hero" class="jumbotron">
+        <h2>Welcome to the Guest Faculty Portal</h2>
+        <p class="lead">
+          This is a portal for all Guest Faculty that teach courses in the Work Integrated Learning Program for WILP. 
+		  Application for New Guest Faculty Positions are OPEN. Click <a href='/registration/signup'>Here</a> to apply.
+        </p>
+        <p>
+          <a href="/application/" class="btn btn-lg btn-primary">Existing User Login</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        </div>
+       	
+       	<div class="footer">
+       		<div class="tri_clr_line_btm">
+       			<img style="width:100%" src="{% static "contentBg.gif" %}">
+       		</div>
+
+          <div class="row" style="margin:0">
+            <div class="col-xs-offset-1 col-xs-4">
+
+              <div class="deemed">
+                <p><strong>An institution deemed to be a University estd. vide Sec.3 of the UGC Act,1956 under notification # F.12-23/63.U-2 of June 18,1964</strong></p>
+              </div>
+
+              <div class="developers_link">
+                <a href="http://varnatech.com/"> © Varna Technologies Pvt. Ltd.</a>
+              </div>
+            </div>
+
+            <div class="col-xs-offset-3 col-xs-4">
+              <div class="emblem">
+                <img style="width:100%" src="{% static "companyBranding.gif" %}">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+       	
+
+        
+
+        
+        
+        <!-- <script src="{% static "jquery.min.js" %}"></script> -->
+        <script src="{% static "bootstrap.min.js" %}"></script>
+        <!-- <script src="{% static "main.js" %}"></script> -->
+
+        
+        
+
+
+    
+
+</body></html>

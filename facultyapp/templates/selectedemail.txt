@@ -1,0 +1,8 @@
+Dear {{ username }},
+We are pleased to inform you that you have been chosen as a guest faculty in the Work Integrated Learning Program at BITS. Our location coordinators will get in touch with you shortly for identification of possible courses and programs we feel you will be suited for.
+Looking forward to a great relation with you!
+
+{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team
