@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),	
     url(r'^registration/', include('allauth.urls')),
     #url(r'', include('model_report.urls')),
-    url(r'^report_builder/', include('report_builder.urls')),
+    #url(r'^report_builder/', include('report_builder.urls')),
     #url(r'^reporting/', include('reporting.urls')),
     #url(r'^reports/', include('reportengine.urls')),
 ]
