@@ -387,7 +387,7 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
         managed = False         
         verbose_name = 'Guest Faculty Honararium'
 		
-"""class GuestFacultyFeedbackResults(models.Model):
+class GuestFacultyFeedbackResults(models.Model):
     guest_faculty_pan_number = models.ForeignKey(GuestFaculty, db_column='guest_faculty_pan_number')
     semester = models.ForeignKey('Semester')
     program = models.ForeignKey('Program')
@@ -402,7 +402,7 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
     class Meta:
         managed = False
         db_table = 'guest_faculty_feedback_results'
-        unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)"""
+        unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)
 
 
 """class GuestFacultyHasLocation(models.Model):
