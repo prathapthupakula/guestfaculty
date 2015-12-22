@@ -185,10 +185,12 @@ def send_gfemail(emailid, mailtemplate,mailtitle,c):
 
 class LocationAdmin(admin.ModelAdmin):
     list_filter = ['location_name']
-    list_display = ('location_id','location_name',upper_case_name)	# Field Value Modification while displaying
-    list_editable = ('location_name',)	  #Editable Grid
+    list_display = ('location_name','location_state','location_country')	# Field Value Modification while displaying
+    list_display_links = ('location_name',)
+    #list_display = ('location_id','location_name',upper_case_name)	# Field Value Modification while displaying
+    #list_editable = ('location_name',)	  #Editable Grid
 #    readonly_fields = ('location_id',)    # Making Read-Only. THis can also be set in the Model file
-    search_fields = ('^location_name','location_id')	#enable search bar (= for %, @ for fulltext. recommended is ^)
+    #search_fields = ('^location_name','location_id')	#enable search bar (= for %, @ for fulltext. recommended is ^)
 # search_fields = ['foreign_key__related_fieldname']	This is for foreign_key search
 #    save_on_top = True
 #    fields = ('location_name', 'location_state', 'location_country')

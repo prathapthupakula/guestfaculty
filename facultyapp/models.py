@@ -387,7 +387,7 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
         managed = False         
         verbose_name = 'Guest Faculty Honararium'
 		
-class GuestFacultyFeedbackResults(models.Model):
+"""class GuestFacultyFeedbackResults(models.Model):
     guest_faculty_pan_number = models.ForeignKey(GuestFaculty, db_column='guest_faculty_pan_number')
     semester = models.ForeignKey('Semester')
     program = models.ForeignKey('Program')
@@ -402,27 +402,27 @@ class GuestFacultyFeedbackResults(models.Model):
     class Meta:
         managed = False
         db_table = 'guest_faculty_feedback_results'
-        unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)
+        unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)"""
 
 
-class GuestFacultyHasLocation(models.Model):
+"""class GuestFacultyHasLocation(models.Model):
     guest_faculty_faculty = models.ForeignKey(GuestFaculty)
     location_location = models.ForeignKey('Location')
 
     class Meta:
         managed = False
         db_table = 'guest_faculty_has_location'
-        unique_together = (('guest_faculty_faculty', 'location_location'),)
+        unique_together = (('guest_faculty_faculty', 'location_location'),)"""
 
 
-class GuestFacultyHasQualification(models.Model):
+"""class GuestFacultyHasQualification(models.Model):
     guest_faculty_faculty = models.ForeignKey(GuestFaculty)
     qualification_qualification = models.ForeignKey('Qualification')
 
     class Meta:
         managed = False
         db_table = 'guest_faculty_has_qualification'
-        unique_together = (('guest_faculty_faculty', 'qualification_qualification'),)
+        unique_together = (('guest_faculty_faculty', 'qualification_qualification'),)"""
 
 
 
@@ -485,7 +485,7 @@ class Program(models.Model):
         return self.program_name		
 
 
-class ProgramHasCourse(models.Model):
+"""class ProgramHasCourse(models.Model):
     program_program = models.ForeignKey(Program)
     course_course = models.ForeignKey(Course)
     degree_degree = models.ForeignKey(Degree)
@@ -493,7 +493,7 @@ class ProgramHasCourse(models.Model):
     class Meta:
         managed = False
         db_table = 'program_has_course'
-        unique_together = (('program_program', 'course_course', 'degree_degree'),)
+        unique_together = (('program_program', 'course_course', 'degree_degree'),)"""
 
 
 class Qualification(models.Model):
