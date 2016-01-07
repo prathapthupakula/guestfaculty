@@ -260,6 +260,12 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
     list_filter = ('application_status','application_submission_date','applying_for_discipline',('current_location',admin.RelatedOnlyFieldListFilter))
     actions = ['update_candidate_status','interview_candidate_call','update_candidate_selection','convert_to_guestfaculty']
     objectactions = ['update_candidate_selection','update_candidate_status']
+	
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(
+                           attrs={'rows': 2,
+                                  'cols': 20})},
+    }	
 
     # Provide Add permissions for registrant role only and disable all others	
     def has_add_permission(self, request, obj=None):
@@ -388,11 +394,11 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
         #_selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
         #tag = forms.ModelChoiceField(Tag.objects)
         #status = forms.ChoiceField(STATUS_LIST)
-        intdate = forms.DateField(required=True,widget=forms.TextInput(attrs=
+        intdate = forms.DateField(label='Interview Date',required=True,widget=forms.TextInput(attrs=
                                 {
                                     'class':'datepicker'
                                 }))
-        inttime = forms.TimeField(required=True,widget=forms.TextInput(attrs=
+        inttime = forms.TimeField(label='Interview Time',required=True,widget=forms.TextInput(attrs=
                                 {
                                     'class':'timepicker'
                                 }))
@@ -451,8 +457,10 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
         #tag = forms.ModelChoiceField(Tag.objects)
         status = forms.ChoiceField(choices=(('Selected', 'Selected'), ('Rejected', 'Rejected'),))
         comments = forms.CharField(widget=forms.Textarea(attrs={'cols': '30','rows' : '5'}))
-        score = forms.DecimalField(max_digits=10, decimal_places=0)
-    
+        score = forms.DecimalField(max_digits=10, decimal_places=1,initial=10,help_text='(maximum score value = 10.0)',min_value=0.0, max_value=10.0 )
+        #error_css_class = 'error'
+        #required_css_class = 'required'
+        
     @takes_instance_or_queryset	
     def update_candidate_selection(self,request,queryset):
         form = None
@@ -910,7 +918,7 @@ class GFAppSite(AdminSite):
     login_form = UserAdminAuthenticationForm
 
     def has_permission(self, request):
-        return request.user.is_active
+        return request.user.is_active and not request.user.is_staff
 		
 gf_app_site = GFAppSite(name='gfapp')
 gf_app_site.register(GuestFacultyCandidate, GuestFacultyCandidateAdmin)

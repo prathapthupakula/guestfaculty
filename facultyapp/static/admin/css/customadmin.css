@@ -1091,15 +1091,25 @@ hr {
 .aligned label {
     text-align:left !important;
 }
-ul.errorlist li{
+/*ul.errorlist li{
 	display:none !important;
-}
+}*/
 .vTextField {
     width: 13.6em !important;
 }
 .field-box p{
 	min-width:190px;
 }
-
-
+.field-box{
+	min-width:361px;
+}
+p label{
+	text-align: left !important;
+	display: block;
+    padding: 4px 10px 0 0;
+    float: left;
+    width: 100px;
+    word-wrap: break-word;
+    line-height: 1;
+}
 

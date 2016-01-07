@@ -22,8 +22,10 @@ urlpatterns = [
     url(r'^application/password_reset/$', auth_views.password_reset, name='admin_password_reset'),
     url(r'^application/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, name='password_reset_confirm'),
-    url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),	
+    url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
     url(r'^registration/', include('allauth.urls')),
+    url(r'^accounts/login/$', lambda x: HttpResponseRedirect('/application/')),  # Redirect this to applications page directly	
+    #url(r'^$',include(gf_app_site.urls)),
     #url(r'', include('model_report.urls')),
     #url(r'^report_builder/', include('report_builder.urls')),
     #url(r'^reporting/', include('reporting.urls')),

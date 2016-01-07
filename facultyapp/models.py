@@ -306,7 +306,7 @@ class GuestFacultyCandidate(models.Model):
     total_experience_in_months = models.IntegerField()
     phone = models.CharField(max_length=13)
     mobile = models.CharField(max_length=13)
-    address1 = models.CharField(max_length=500)
+    address1 = models.TextField(max_length=500)
     teach_experience_in_months = models.IntegerField(blank=True, null=True)
     current_organization = models.CharField(max_length=100)
     current_org_designation = models.CharField(max_length=100)
@@ -320,18 +320,18 @@ class GuestFacultyCandidate(models.Model):
     applying_for_discipline = models.ForeignKey(Discipline)
     uploaded_cv_file_name = models.FileField('Upload CV',max_length=200, blank=True, null=True)
     industry_exp_in_months = models.IntegerField(blank=True, null=True)
-    nature_of_current_job = models.CharField(max_length=200, blank=True, null=True)
-    areas_of_expertise = models.CharField(max_length=2000, blank=True, null=True)
-    certifications = models.CharField(max_length=1000, blank=True, null=True)
-    awards_and_distinctions = models.CharField(max_length=1000, blank=True, null=True)
-    publications = models.CharField(max_length=2000, blank=True, null=True)
+    nature_of_current_job = models.TextField(max_length=200, blank=True, null=True)
+    areas_of_expertise = models.TextField(max_length=2000, blank=True, null=True)
+    certifications = models.TextField(max_length=1000, blank=True, null=True)
+    awards_and_distinctions = models.TextField(max_length=1000, blank=True, null=True)
+    publications = models.TextField(max_length=2000, blank=True, null=True)
     by_user = models.ForeignKey(User, null=True, blank=True)
 	
     class Meta:
         managed = False
         db_table = 'guest_faculty_candidate'
         #unique_together = (('application_id', 'applying_for_discipline'),)
-        verbose_name = 'Guest Faculty Candidate'
+        verbose_name = 'Guest Faculty Application'
 
     def __str__(self):              # Returns Name of Location wherever referenced
         return self.application_number + "(" + self.name + ")"
@@ -388,6 +388,7 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
         verbose_name = 'Guest Faculty Honararium'
 		
 class GuestFacultyFeedbackResults(models.Model):
+    id = models.AutoField(primary_key=True,editable=False)
     guest_faculty_pan_number = models.ForeignKey(GuestFaculty, db_column='guest_faculty_pan_number')
     semester = models.ForeignKey('Semester')
     program = models.ForeignKey('Program')

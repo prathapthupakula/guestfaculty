@@ -37,7 +37,7 @@ INSTALLED_APPS = (
 #    'admin_tools.dashboard',
 #	'grappelli',
 #	'suit',
-    'flat',
+#    'flat',
 #    'menu',
 #    'jet',
 #    'wpadmin',
@@ -45,8 +45,8 @@ INSTALLED_APPS = (
     'admin_report',
 #    'model_report', 
     'facultyapp',
-    'gfplan',
-    'timetable',
+#    'gfplan',
+#    'timetable',
     'reports',	
 #    'guestfaculty.apps.GuestFaculty',
     'django.contrib.admin',
@@ -62,6 +62,7 @@ INSTALLED_APPS = (
 	#'allauth.socialaccount',
     'import_export',
     'django_object_actions',
+    'flat',
 #    'report_builder',
     #'reportengine',
 )
@@ -84,6 +85,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
 )
 
 ROOT_URLCONF = 'guestfaculty.urls'
@@ -108,6 +110,7 @@ TEMPLATES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.RemoteUserBackend',
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 
@@ -144,7 +147,7 @@ USE_L10N = False
 
 USE_TZ = False
 
-MEDIA_URL = "http://192.168.1.177/django/guestfaculty/"
+#MEDIA_URL = "http://192.168.1.177/django/guestfaculty/"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -159,13 +162,21 @@ EMAIL_HOST_USER = 'reporting@varnatech.com'
 EMAIL_HOST_PASSWORD = '$epo1234'
 EMAIL_USE_SSL = True
 
+#DEFAULT_FROM_EMAIL = 'noreply@wilp.bits-pilani.ac.in'
+#EMAIL_HOST = 'server.trendmaxi.com'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = 'brilamail@trendmaxi.com'
+#EMAIL_HOST_PASSWORD = 'kvn_456Bits'
+#EMAIL_USE_TLS = True
+
+
 DATE_FORMAT = 'N j, Y'
 
 #CUSTOM
 APPLICATION_URL = 'http://gf-varnatech.ka-sites.space/application/'
 
 try:
-    from local_settings.py import *
+    from local_settings import *
 except:
     pass
 

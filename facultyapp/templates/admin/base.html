@@ -24,7 +24,7 @@
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        {% block branding %}{% endblock %}
+        {% block branding %}<h1 id="site-name"><a href="{% url 'gfapp:index' %}"><img src="{% static 'logo.gif' %}"></a></h1>{% endblock %}
         </div>
         {% block usertools %}
         {% if has_permission %}
@@ -51,7 +51,7 @@
         </div>
         {% endif %}
         {% endblock %}
-        {% block nav-global %}{% endblock %}
+        {% block nav-global %}<hr class=sep>{% endblock %}
     </div>
     <!-- END Header -->
     {% block breadcrumbs %}
@@ -108,7 +108,10 @@
             </div>
 
           </div>
-        </div>	{% endblock %}
+        </div>
+
+
+    {% endblock %}
 </div>
 <!-- END Container -->
 

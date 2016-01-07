@@ -11,18 +11,26 @@
   {{ form.as_p }}
 
     <p>The Conversion will be applied to:</p>
+	<div id="usermsg" style="display:none; color: red;">No valid records found. Please try again</div>
 
     <ul>
 	{% for candidate in candidates %}
        {% if candidate.application_status == 'Selected' %}
 	   <li> {{ candidate }} </li>
 	   <input type="hidden" name="_selected_action" value="{{ candidate.pk }}">
+	   <input type="hidden" name="record_exists" id="record_exists" value='true'>
 	   {% endif %}
     {% endfor %}
 	</ul>
 	
     <input type="hidden" name="action" value="convert_to_guestfaculty" />
-    <input type="submit" name="update" value="Update" />
+    <input id="submitbutton" type="submit" name="update" value="Update" />
+    <input type="button" value="Back" onClick="history.go(-1);return true;">
 </form>
-
+<script>
+if (!document.contains(document.getElementById("record_exists"))) {
+            document.getElementById("submitbutton").remove();
+			document.getElementById('usermsg').style.display = 'block';
+} 
+</script>
 {% endblock %}

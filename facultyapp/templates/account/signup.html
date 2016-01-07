@@ -4,9 +4,7 @@
 
 {% block title %}{{ title }} | {{ site_title|default:_('Registration') }}{% endblock %}
 
-{% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Registration') }}</a></h1>
-{% endblock %}
+
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />{% endblock %}
 
@@ -35,3 +33,5 @@
 </form>
 
 {% endblock %}
+
+{% block footer %}{% endblock %}
