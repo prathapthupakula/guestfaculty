@@ -758,6 +758,9 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
         try:
             obj.course_offer_status='Accepted'
             obj.save()
+            # Increment Accepted Count in Course Location Semester Details
+            ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
+            ls.update(accepted_count=F('accepted_count') + 1)
             message_bit = "Course was"
             self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
         except IntegrityError:
@@ -770,7 +773,7 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
         try:      
             obj.course_offer_status='Rejected'
             obj.save()
-        # Decrement assigned_count in Course Location Semester Details   
+            # Decrement assigned_count in Course Location Semester Details   
             ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
             ls.update(assigned_count=F('assigned_count') - 1)
             message_bit = "Course was"  
@@ -794,9 +797,9 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
 admin.site.register(GuestFacultyCourseOffer, GuestFacultyCourseOfferAdmin)
 
 class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
-    list_display = ('course','location','semester','discipline','program', 'max_faculty_count','assigned_count')
+    list_display = ('course','location','semester','discipline','program', 'max_faculty_count','assigned_count','accepted_count')
     list_filter = (('location',admin.RelatedOnlyFieldListFilter),('semester',admin.RelatedOnlyFieldListFilter),('discipline',admin.RelatedOnlyFieldListFilter),('program',admin.RelatedOnlyFieldListFilter),)
-    readonly_fields = ('assigned_count',)	
+    readonly_fields = ('assigned_count', 'accepted_count')	
     actions = ['assign_course']
 	
     resource_class = CLSResource

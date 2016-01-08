@@ -148,6 +148,7 @@ class CourseLocationSemesterDetail(models.Model):
     number_of_students_in_class = models.IntegerField('Class Size')
     number_of_sections = models.IntegerField(db_column='number _of_sections')  # Field renamed to remove unsuitable characters.
     assigned_count = models.IntegerField('Assigned',editable=False,default=0)
+    accepted_count = models.IntegerField('Accepted',editable=False,default=0)
 	
     class Meta:
         managed = False
