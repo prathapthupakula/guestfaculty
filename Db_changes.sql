@@ -1,2 +1,2 @@
-ALTER TABLE  `course_location_semester_detail` CHANGE  `assigned_count`  `assigned_count` INT( 11 ) NOT NULL DEFAULT  '0'
-ALTER TABLE  `course_location_semester_detail` ADD  `accepted_count` INT( 11 ) NOT NULL DEFAULT  '0'
+ALTER TABLE  `course_location_semester_detail` CHANGE  `assigned_count`  `assigned_count` INT( 11 ) NOT NULL DEFAULT  '0';
+ALTER TABLE  `course_location_semester_detail` ADD  `accepted_count` INT( 11 ) NOT NULL DEFAULT  '0';
