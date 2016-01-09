@@ -764,9 +764,11 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
             ls.update(accepted_count=F('accepted_count') + 1)
             message_bit = "Course was"
             self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
+            return "<script>window.history.back();</script>"
         except IntegrityError:
             message_bit = "Course was"
             self.message_user(request, "%s was already marked as Accepted ." % message_bit,messages.ERROR)
+            return "<script>window.history.back();</script>"
 			
     accept_course_offer.short_description = "Accept Course Offer"
     accept_course_offer.label = "Accept Course Offer"

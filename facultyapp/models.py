@@ -381,6 +381,8 @@ class GuestFacultyCourseOffer(models.Model):
         unique_together = (('course', 'semester', 'program', 'guest_faculty', 'location', 'course_offer_status'),)
         verbose_name = 'Course Assignment'
 
+    def __str__(self):              # Returns Name of Location wherever referenced
+        return str(self.course)		
 		
 
 class GuestFacultyHonararium(GuestFacultyCourseOffer):
