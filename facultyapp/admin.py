@@ -763,6 +763,7 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
             ls.update(accepted_count=F('accepted_count') + 1)
             message_bit = "Course was"
             self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
+            return HttpResponseRedirect(request.get_full_path())
         except IntegrityError:
 	    pass                
     accept_course_offer.short_description = "Accept Course Offer"
