@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+
+<h1>Confirm the following :</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+  {{ form.as_p }}
+
+    <p>Please confirm Rejection of this course</p>
+    <div id="usermsg" style="display:none; color: red;">No valid records found. Please try again</div>
+
+    <ul>
+    {% for course in courses %}
+	   <li> {{ course.course }} / {{ course.semester }} / {{ course.program }} / {{ course.location }} </li>
+	   <input type="hidden" name="_selected_action" value="{{ course.pk }}">
+	   <input type="hidden" name="record_exists" id="record_exists" value='true'>
+	{% endfor %}
+    </ul>
+    	
+    <input type="hidden" name="action" value="reject_course_offer" />
+    <input id="submitbutton" type="submit" name="reject" value="Reject" />
+	<input type="button" value="Back" onClick="history.go(-1);return true;">
+		   
+
+</form>
+<script>
+if (!document.contains(document.getElementById("record_exists"))) {
+            document.getElementById("submitbutton").remove();
+			document.getElementById('usermsg').style.display = 'block';
+} 
+</script>
+
+{% endblock %}

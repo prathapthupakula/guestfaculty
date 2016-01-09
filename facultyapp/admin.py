@@ -754,33 +754,73 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
         else :
 	    # get application's "owner" 
             return qs.filter(guest_faculty__updated_by=request.user.id)
-    def accept_course_offer(self, request, obj):
-        try:
-            obj.course_offer_status='Accepted'
-            obj.save()
-            # Increment Accepted Count in Course Location Semester Details
-            ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
-            ls.update(accepted_count=F('accepted_count') + 1)
-            message_bit = "Course was"
-            self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
-        except IntegrityError:
-	    pass                
+
+    class AcceptCourseForm(forms.Form):
+        pass
+		
+    @takes_instance_or_queryset		
+    def accept_course_offer(self, request, queryset):
+        form = None
+        if 'accept' in request.POST:
+            form = self.AcceptCourseForm(request.POST)
+            if form.is_valid():
+                for obj in queryset:
+                    try:
+                        obj.course_offer_status='Accepted'
+                        obj.save()
+                        # Increment Accepted Count in Course Location Semester Details
+                        ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
+                        ls.update(accepted_count=F('accepted_count') + 1)
+                        message_bit = "Course was"
+                        self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
+                        return "<script>window.history.back();</script>"
+                    except IntegrityError:
+                        message_bit = "Course was"
+                        self.message_user(request, "%s was already marked as Accepted ." % message_bit,messages.ERROR)
+                        return "<script>window.history.back();</script>"
+
+        if not form:
+            form = self.AcceptCourseForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})				
+   
+        data = {'courses': queryset,'form': form,} 
+        data.update(csrf(request)) 
+        return render_to_response('admin/accept_course.html', data)					
     accept_course_offer.short_description = "Accept Course Offer"
     accept_course_offer.label = "Accept Course Offer"
 
-    def reject_course_offer(self, request, obj):
-        # catch the IntegrityError
-        try:      
-            obj.course_offer_status='Rejected'
-            obj.save()
-            # Decrement assigned_count in Course Location Semester Details   
-            ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
-            ls.update(assigned_count=F('assigned_count') - 1)
-            message_bit = "Course was"  
-            self.message_user(request, "%s successfully marked as Rejected ." % message_bit)
-        except IntegrityError:
-            pass
-    reject_course_offer.short_description = "Reject Course Offer"
+
+    class RejectCourseForm(forms.Form):
+        pass
+	
+    @takes_instance_or_queryset		
+    def reject_course_offer(self, request, queryset):
+        form = None
+        if 'reject' in request.POST:
+            form = self.RejectCourseForm(request.POST)
+            if form.is_valid():
+                for obj in queryset:
+                    try:
+                        obj.course_offer_status='Rejected'
+                        obj.save()
+                        # Decrement assigned_count in Course Location Semester Details   
+                        ls = CourseLocationSemesterDetail.objects.filter(course=obj.course,location=obj.location,semester=obj.semester,program=obj.program)
+                        ls.update(assigned_count=F('assigned_count') - 1)
+                        message_bit = "Course was"
+                        self.message_user(request, "%s successfully marked as Rejected ." % message_bit)
+                        return "<script>window.history.back();</script>"
+                    except IntegrityError:
+                        message_bit = "Course was"
+                        self.message_user(request, "%s was already marked as Rejected ." % message_bit,messages.ERROR)
+                        return "<script>window.history.back();</script>"
+
+        if not form:
+            form = self.RejectCourseForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})				
+   
+        data = {'courses': queryset,'form': form,} 
+        data.update(csrf(request)) 
+        return render_to_response('admin/reject_course.html', data)					
+	
+	reject_course_offer.short_description = "Reject Course Offer"
     reject_course_offer.label = "Reject Course Offer"
 	
     objectactions = ('accept_course_offer','reject_course_offer',)
