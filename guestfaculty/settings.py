@@ -31,26 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-#   'admin_tools',
-#    'admin_tools.theming',
-#    'admin_tools.menu',
-#    'admin_tools.dashboard',
-#	'grappelli',
-#	'suit',
-#    'flat',
-#    'menu',
-#    'jet',
-#    'wpadmin',
-#    'reporting',
     'admin_report',
-#    'model_report', 
     'facultyapp',
 #    'gfplan',
 #    'timetable',
     'reports',	
-#    'guestfaculty.apps.GuestFaculty',
     'django.contrib.admin',
-#    'django.contrib.admin.apps.SimpleAdminConfig'
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -63,8 +49,6 @@ INSTALLED_APPS = (
     'import_export',
     'django_object_actions',
     'flat',
-#    'report_builder',
-    #'reportengine',
 )
 
 # Settings for AllAuth Application for Signup

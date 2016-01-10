@@ -5,14 +5,14 @@ from django.contrib.auth import views as auth_views
 from facultyapp import views
 
 
-from facultyapp.admin import gf_app_site
+#from facultyapp.admin import gf_app_site
 
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^application/', include(admin.site.urls)),
     url(r'^faculty/', include('facultyapp.urls')),
-    url(r'^application/', include(gf_app_site.urls)),
+    #url(r'^application/', include(gf_app_site.urls)),
     url(r'^application/password_reset/$', auth_views.password_reset, name='admin_password_reset'),
     url(r'^application/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, name='password_reset_confirm'),

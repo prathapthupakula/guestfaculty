@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin, SimpleListFilter
 from django.contrib.admin.widgets import AdminDateWidget
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -181,7 +181,27 @@ def send_gfemail(emailid, mailtemplate,mailtitle,c):
     send_mail(mailtitle, msg_plain, settings.EMAIL_HOST_USER, emailid, fail_silently=True)	
     return True
 
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            raise forms.ValidationError(("This account is inactive."), code='inactive',)
+
+class Admin(AdminSite):
+    def has_permission(self,request): 
+        return request.user.is_active
 		
+    login_form = CustomAuthenticationForm
+    site_url = None
+    site_header = 'Guest Faculty Application'
+    site_title =  'Guest Faculty Application'
+    index_title = 'Guest Faculty Application'
+    index_template = 'facultyapp/index.html'
+    app_index_template = 'facultyapp/index.html'
+	
+admin.site = Admin(name='admin')
+
+	
 
 class LocationAdmin(admin.ModelAdmin):
     list_filter = ['location_name']
@@ -764,11 +784,9 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
             ls.update(accepted_count=F('accepted_count') + 1)
             message_bit = "Course was"
             self.message_user(request, "%s successfully marked as Accepted ." % message_bit)
-            return "<script>window.history.back();</script>"
         except IntegrityError:
             message_bit = "Course was"
             self.message_user(request, "%s was already marked as Accepted ." % message_bit,messages.ERROR)
-            return "<script>window.history.back();</script>"
 			
     accept_course_offer.short_description = "Accept Course Offer"
     accept_course_offer.label = "Accept Course Offer"
@@ -908,33 +926,33 @@ class FacultyClassAttendanceAdmin(ImportExportMixin,admin.ModelAdmin):
 
 admin.site.register(FacultyClassAttendance,FacultyClassAttendanceAdmin)
 
-
-
+admin.site.register(User,UserAdmin)
+admin.site.register(Group,GroupAdmin)
 
 admin.site.disable_action('delete_selected') #disable action in MRA Action list
 
 
-
 # Create Separate Admin site for Non-Admin/Non-Staff Users
-class UserAdminAuthenticationForm(AuthenticationForm):
-    sdf=1
+#class UserAdminAuthenticationForm(AuthenticationForm):
+#    sdf=1
 
 # Register Admin Site for Guest Faculty Candidates
-class GFAppSite(AdminSite):
-    site_header = 'Guest Faculty Online Application'
-    site_title =  'Guest Faculty Online Application'
-    site_url = None
-    index_title = 'Guest Faculty Online Application'
-    index_template = 'facultyapp/index.html'
-    login_form = UserAdminAuthenticationForm
+#class GFAppSite(AdminSite):
+#    site_header = 'Guest Faculty Online Application'
+#    site_title =  'Guest Faculty Online Application'
+#    site_url = None
+#    index_title = 'Guest Faculty Online Application'
+#    index_template = 'facultyapp/index.html'
+#    app_index_template = 'facultyapp/index.html'
+#    login_form = UserAdminAuthenticationForm
 
-    def has_permission(self, request):
-        return request.user.is_active and not request.user.is_staff
+#    def has_permission(self, request):
+#        return request.user.is_active and not request.user.is_staff
 		
-gf_app_site = GFAppSite(name='gfapp')
-gf_app_site.register(GuestFacultyCandidate, GuestFacultyCandidateAdmin)
-gf_app_site.register(GuestFaculty, GuestFacultyAdmin)
-gf_app_site.register(GuestFacultyCourseOffer, GuestFacultyCourseOfferAdmin)
-gf_app_site.disable_action('delete_selected') #disable action in MRA Action list
+#gf_app_site = GFAppSite(name='gfapp')
+#gf_app_site.register(GuestFacultyCandidate, GuestFacultyCandidateAdmin)
+#gf_app_site.register(GuestFaculty, GuestFacultyAdmin)
+#gf_app_site.register(GuestFacultyCourseOffer, GuestFacultyCourseOfferAdmin)
+#gf_app_site.disable_action('delete_selected') #disable action in MRA Action list
 
 # End of New Admin Site
