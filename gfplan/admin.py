@@ -40,9 +40,18 @@ from django.contrib.admin import RelatedFieldListFilter
 from django.contrib.admin import AdminSite
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import RegexValidator
+
 
 from facultyapp.models import Coordinator, Course, Discipline, Location, Program, Semester, CourseLocationSemesterDetail
 from .models import BufferType, GuestFacultyPlanningNumbers, PlanningWindowStatus, ApplicationUsers,CurrentSemester
+
+from import_export import resources
+#from import_export.admin import ExportActionModelAdmin
+#from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
+from import_export import fields,widgets
+from import_export.widgets import ForeignKeyWidget, BooleanWidget
 
 
 
@@ -108,8 +117,19 @@ class  CurrentSemesterFilter(SimpleListFilter):
             return queryset.filter(semester_id=currentsem,current_plan_flag=1)
         else:
             return qs
-			
-class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,admin.ModelAdmin):
+
+class PlanningNumbers(resources.ModelResource):
+    course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
+    location = fields.Field(column_name='location', attribute='location', widget=ForeignKeyWidget(Location, 'location_name'))
+    semester = fields.Field(column_name='semester', attribute='semester', widget=ForeignKeyWidget(Semester, 'semester_name'))
+    program = fields.Field(column_name='program', attribute='program', widget=ForeignKeyWidget(Program, 'program_name'))
+
+    class Meta:
+        model = GuestFacultyPlanningNumbers
+	fields = ('location','program','course','semester','plan_status','faculty_in_database','total_faculty_required','to_be_recruited_with_buffer','version_number','current_plan_flag')	
+	
+class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.ModelAdmin):
+    resource_class = PlanningNumbers
     form = GuestFacultyPlanningNumbersAdminForm
     #get the current user
     def get_form(self, request,obj=None, **kwargs):
@@ -118,6 +138,7 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,admin.ModelAdmin):
          return form
 
     model = GuestFacultyPlanningNumbers
+    #resource_class = PlanningNumbers
     list_display = ('id','location','program','course','semester','plan_status','faculty_in_database','total_faculty_required','to_be_recruited_with_buffer','version_number','current_plan_flag')
     fields = (('location','program','course'),('semester','discipline'),('faculty_in_database','total_faculty_required'),('buffer_type','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer'),'planning_comments',('program_coordinator','plan_status'),'version_number')
     readonly_fields = ('faculty_to_be_recruited','current_plan_flag','to_be_recruited_with_buffer','buffer_number','version_number','plan_status', 'program_coordinator','created_by','created_on','version_number')
@@ -351,6 +372,21 @@ class PlanningWindowStatusAdminForm(forms.ModelForm):
             if currenstsem==0:
                     raise forms.ValidationError("Please Select current semester")
 
+class  CurrentSemesterFilter1(SimpleListFilter):
+    title = 'currentsemester'
+    parameter_name = 'currentsemester'
+
+    def lookups(self, request, model_admin):
+        semesters = set([s for s in Semester.objects.all()])
+        return [(s.semester_id,s.semester_name) for s in semesters]
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(semester_id=self.value())    
+        elif self.value() == None:
+            currentsem=CurrentSemester.objects.values_list("currentsemester",flat=True)
+            return queryset.filter(semester_id=currentsem)
+        else:
+            return qs
 class PlanningWindowStatusAdmin(admin.ModelAdmin):
     form=PlanningWindowStatusAdminForm   
     model = PlanningWindowStatus
@@ -358,41 +394,22 @@ class PlanningWindowStatusAdmin(admin.ModelAdmin):
     fields = ('semester','program','status','start_date','end_date','last_updated_date','updated_by')
     readonly_fields = ('updated_by','last_updated_date')
     list_editable = ('status','start_date','end_date')
-    list_display_links =('semester',)
-
-    """def get_readonly_fields(self, request, obj=None):
-        print "prtahappp"
-        if obj: # editing an existing object
-            open_check = PlanningWindowStatus.objects.filter(status='Close').count()
-            print open_check
-            if open_check ==0:
-                
-                print "prtahapppccc"
-                return self.readonly_fields + ('semester','program','start_date','end_date')
-             
-            else:
-            	print "prtahapppoooo"
-                return ['semester','program','status','start_date','end_date','last_updated_date','updated_by'] # This is for All fields			
-        return self.readonly_fields"""
-
+    list_display_links =None
+    list_filter = (CurrentSemesterFilter1,)
     def save_model(self, request, obj, form, change):
         if not change:
             obj.updated_by = request.user
             obj.last_updated_date = datetime.datetime.now()
             obj.save()
-        if change and obj.status=="Closed":
-            obj.updated_by = request.user
-            obj.last_updated_date = datetime.datetime.now()
-            return self.readonly_fields + ('start_date','end_date')
-            obj.save()
-        if change and obj.status=="Open":
+        if change:
             obj.updated_by = request.user
             obj.last_updated_date = datetime.datetime.now()
             obj.save()
-   
+
+
 admin.site.register(PlanningWindowStatus, PlanningWindowStatusAdmin)
+
 class ApplicationUsersAdminForm(forms.ModelForm):
-    #user = models.CharField(max_length=200)
     def clean(self):
         cd = self.cleaned_data.get('user')
         print cd
@@ -400,20 +417,18 @@ class ApplicationUsersAdminForm(forms.ModelForm):
         if len(cd) < 30:
             print len(cd)
             try:
-                print 'hareesh'
-                esr=re.search(r"^[\w\d'-]+@[\w\.-]+$", cd)
-                print esr
-                if esr==None:
-                    raise forms.ValidationError("Please Select user")    
-
+                print "hareesh"
+                if re.match('\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b', cd):
+                    print 'hareesh'
+                    return 1
+                    
+                #regs = re.match('.,*', cd)
             except AttributeError:
                 return None # no match, so m.regs will fail
-           
-              
-    
+
 class ApplicationUsersAdmin(admin.ModelAdmin):
-    form = ApplicationUsersAdminForm
-    #model = ApplicationUsers
+    #form = ApplicationUsersAdminForm
+    model = ApplicationUsers
     readonly_fields = ('application_name',)
     list_display = ('application_name','user','role_name','role_parameters','created_on','created_by','last_updated_on','last_updated_by')
     fields = ('application_name','user','role_name','role_parameters')
@@ -423,16 +438,15 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             obj.created_on = datetime.datetime.today()
             obj.last_updated_on=datetime.datetime.today()
             obj.last_updated_by=request.user.id
-            obj.created_by = request.user.id	
-            obj.save()
+            obj.created_by = request.user.id
             apuser=User.objects.filter(username=obj.user).count()
             if apuser==0:
                 user = User.objects.create_user(obj.user)
-                request.user=user
                 user.is_staff = True
-                request.user.groups.add(Group.objects.get(name='coordinator'))
                 user.save()
-        if change:
+            user.groups.add(Group.objects.get(name='coordinator'))
+            obj.save()
+        elif change:
             obj.created_on = datetime.datetime.today()
             obj.last_updated_on=datetime.datetime.today()
             obj.last_updated_by=request.user.id

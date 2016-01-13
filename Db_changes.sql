@@ -1,3 +1,53 @@
+DROP TABLE IF EXISTS `application_users`;
+CREATE TABLE IF NOT EXISTS `application_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `application_name` varchar(50) NOT NULL,
+  `user` varchar(255) NOT NULL,
+  `role_name` varchar(225) NOT NULL,
+  `role_parameters` varchar(225) NOT NULL,
+  `created_on` datetime NOT NULL,
+  `created_by` varchar(50) NOT NULL,
+  `last_updated_on` datetime NOT NULL,
+  `last_updated_by` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `buffer_type`
+--
+
+DROP TABLE IF EXISTS `buffer_type`;
+CREATE TABLE IF NOT EXISTS `buffer_type` (
+  `buffer_calc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `buffer_percentage` decimal(10,2) NOT NULL,
+  `buffer_name` varchar(20) NOT NULL,
+  PRIMARY KEY (`buffer_calc_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `current_semester`
+--
+
+DROP TABLE IF EXISTS `current_semester`;
+CREATE TABLE IF NOT EXISTS `current_semester` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `currentsemester_id` int(11) NOT NULL,
+  `created_on_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `currentsemester_id` (`currentsemester_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=37 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `guest_faculty_planning_numbers`
+--
+
 DROP TABLE IF EXISTS `guest_faculty_planning_numbers`;
 CREATE TABLE IF NOT EXISTS `guest_faculty_planning_numbers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -37,9 +87,37 @@ CREATE TABLE IF NOT EXISTS `guest_faculty_planning_numbers` (
   KEY `	fk_guest_faculty_planning_numbers_approve_user1_idx` (`approved_rejected_by_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=252 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `planning_window_status`
+--
+
+DROP TABLE IF EXISTS `planning_window_status`;
+CREATE TABLE IF NOT EXISTS `planning_window_status` (
+  `planning_id` int(11) NOT NULL AUTO_INCREMENT,
+  `semester_id` int(11) NOT NULL,
+  `program_id` int(11) NOT NULL,
+  `status` varchar(15) NOT NULL,
+  `updated_by_id` int(11) NOT NULL,
+  `last_updated_date` datetime NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  PRIMARY KEY (`planning_id`,`semester_id`,`program_id`),
+  KEY `fk_planning_window_status_semester1_idx` (`semester_id`),
+  KEY `fk_planning_window_status_program1_idx` (`program_id`),
+  KEY `fk_planning_window_status_by1_idx` (`updated_by_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=73 ;
+
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `current_semester`
+--
+ALTER TABLE `current_semester`
+  ADD CONSTRAINT `current_semester_ibfk_1` FOREIGN KEY (`currentsemester_id`) REFERENCES `semester` (`semester_id`);
 
 --
 -- Constraints for table `guest_faculty_planning_numbers`
@@ -55,3 +133,11 @@ ALTER TABLE `guest_faculty_planning_numbers`
   ADD CONSTRAINT `guest_faculty_planning_numbers_ibfk_1` FOREIGN KEY (`created_by_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `guest_faculty_planning_numbers_ibfk_2` FOREIGN KEY (`updated_by_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `guest_faculty_planning_numbers_ibfk_3` FOREIGN KEY (`approved_rejected_by_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `planning_window_status`
+--
+ALTER TABLE `planning_window_status`
+  ADD CONSTRAINT `planning_window_status_ibfk_2` FOREIGN KEY (`updated_by_id`) REFERENCES `auth_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_planning_window_status_program1` FOREIGN KEY (`program_id`) REFERENCES `program` (`program_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_planning_window_status_semester1` FOREIGN KEY (`semester_id`) REFERENCES `semester` (`semester_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
