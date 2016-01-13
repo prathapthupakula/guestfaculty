@@ -10,7 +10,7 @@ CREATE TABLE `application_users` (
   `last_updated_by` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `current_semester` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
