@@ -40,11 +40,13 @@ from django_object_actions import (BaseDjangoObjectActions, takes_instance_or_qu
 
 from django.contrib.admin import RelatedFieldListFilter
 
+from django.contrib.contenttypes.models import ContentType
+
 from django.contrib.admin import AdminSite
 
 from admin_report.mixins import ChartReportAdmin
 
-from .models import Location, GuestFacultyCandidate, Program, CandidateQualification, CandidateEvaluation, GuestFaculty, GuestFacultyQualification, GfInterestedInDiscipline, Course, Discipline, Semester, CourseLocationSemesterDetail, Coordinator, GuestFacultyCourseOffer, GuestFacultyHonararium, FacultyClassAttendance
+from .models import Location, GuestFacultyCandidate, Program, CandidateQualification, CandidateEvaluation, GuestFaculty, GuestFacultyQualification, GfInterestedInDiscipline, Course, Discipline, Semester, CourseLocationSemesterDetail, Coordinator, GuestFacultyCourseOffer, GuestFacultyHonararium, FacultyClassAttendance, FeedbackSurvey, GuestFacultyFeedbackResults, GuestFacultyScore
 
 
 STATUS_LIST = (
@@ -66,6 +68,41 @@ class HonarariumResource(resources.ModelResource):
     class Meta:
         model = GuestFacultyHonararium
 
+    course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
+    location = fields.Field(column_name='location', attribute='location', widget=ForeignKeyWidget(Location, 'location_name'))
+    semester = fields.Field(column_name='semester', attribute='semester', widget=ForeignKeyWidget(Semester, 'semester_name'))
+    program = fields.Field(column_name='program', attribute='program', widget=ForeignKeyWidget(Program, 'program_name'))
+    guest_faculty = fields.Field(column_name='guest_faculty', attribute='guest_faculty', widget=ForeignKeyWidget(GuestFaculty, 'guest_faculty_id'))
+    #delete = fields.Field(widget=widgets.BooleanWidget())
+	
+    class Meta:
+        model = GuestFacultyCourseOffer
+        fields = ('course','location','semester','program','guest_faculty','honorarium_given','honorarium_text','hon_issued_on_date','hon_issued_by','honorarium_payment_mode','course_offer_status')
+        import_id_fields = ('course', 'semester', 'program', 'guest_faculty', 'location','course_offer_status')
+
+    #def for_delete(self, row, instance):
+    #    return self.fields['delete'].clean(row)
+
+class ScoreResource(resources.ModelResource):
+
+    class Meta:
+        model = GuestFacultyScore
+
+    course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
+    location = fields.Field(column_name='location', attribute='location', widget=ForeignKeyWidget(Location, 'location_name'))
+    semester = fields.Field(column_name='semester', attribute='semester', widget=ForeignKeyWidget(Semester, 'semester_name'))
+    program = fields.Field(column_name='program', attribute='program', widget=ForeignKeyWidget(Program, 'program_name'))
+    guest_faculty = fields.Field(column_name='guest_faculty', attribute='guest_faculty', widget=ForeignKeyWidget(GuestFaculty, 'guest_faculty_id'))
+    #delete = fields.Field(widget=widgets.BooleanWidget())
+	
+    class Meta:
+        model = GuestFacultyCourseOffer
+        fields = ('course','location','semester','program','guest_faculty','course_offer_status','assessment_score','feedback',)
+        import_id_fields = ('course', 'semester', 'program', 'guest_faculty', 'location','course_offer_status')
+
+    #def for_delete(self, row, instance):
+    #    return self.fields['delete'].clean(row)
+		
 class CLSResource(resources.ModelResource):
 
     course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
@@ -263,7 +300,7 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
     model = GuestFacultyCandidate
     fieldsets = (
         ('Personal Details', {
-            'fields': ('application_number',('name','pan_number'),('date_of_birth','gender'),('phone','mobile'),('address1','current_location'),('applying_for_discipline', 'reapplication'))
+            'fields': ('application_number',('name','pan_number'),('date_of_birth','gender'),('phone','mobile'),('address1','current_location'),('applying_for_discipline', 'reapplication','application_status'))
         }),
 		   ('Current Experience', {
             'fields': (('current_organization','current_org_designation'),('months_in_curr_org','teach_experience_in_months'),('industry_exp_in_months','total_experience_in_months'),('nature_of_current_job','areas_of_expertise'),('certifications','awards_and_distinctions'),'publications','uploaded_cv_file_name')
@@ -271,7 +308,7 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
     )
     list_display = ('application_number','name','application_status','application_submission_date','current_location_id')
     radio_fields = {"gender": admin.HORIZONTAL}
-    readonly_fields = ('application_id','application_number','reapplication')
+    readonly_fields = ('application_id','application_number','reapplication','application_status')
     widgets = {
             'address1': Textarea(attrs={'cols': 20, 'rows': 5}),
     }
@@ -656,7 +693,7 @@ class GfInterestedInDisciplineInline(admin.TabularInline):
     max_num = 5	
     verbose_name_plural = 'Disciplines Interested'
 	
-class GuestFacultyAdmin(admin.ModelAdmin):
+class GuestFacultyAdmin(DjangoObjectActions,admin.ModelAdmin):
     model = GuestFaculty
     fieldsets = (
         ('Personal Details', {
@@ -702,6 +739,15 @@ class GuestFacultyAdmin(admin.ModelAdmin):
         if not request.user.is_staff:
             actions = []			
         return actions		
+
+    def view_teach_history(self, request, obj):
+        return HttpResponseRedirect("/application/facultyapp/guestfacultycourseoffer/?guest_faculty__id__exact=%s" % obj.id)
+		
+    view_teach_history.short_description = "View Teaching History"
+    view_teach_history.label = "View Teaching History"
+
+    objectactions = ('view_teach_history',)
+		
 		
 admin.site.register(GuestFaculty, GuestFacultyAdmin)
 
@@ -739,9 +785,10 @@ accept_reject.short_description = ''
 class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.ModelAdmin):
     model = GuestFacultyCourseOffer
     resource_class = GFCOResource
-    fields = ('course','semester','program','guest_faculty','location','program_coordinator','number_students_in_class','course_offer_status')
-    readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class')
-    list_filter = ('course','semester','program','course_offer_status',('location',admin.RelatedOnlyFieldListFilter),)
+    fields = ('course','semester','program','guest_faculty','location','program_coordinator','number_students_in_class','course_offer_status','assessment_score')
+    readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class','assessment_score',)
+    list_filter = ('course','semester','program','course_offer_status',('location',admin.RelatedOnlyFieldListFilter), )
+    ordering = ['-update_datetime']
      	
 	
     def has_add_permission(self, request, obj=None):
@@ -752,10 +799,10 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
 		
     def changelist_view(self, request, extra_context=None):
         if request.user.groups.filter(name__in=['guestfaculty']).exists():
-            self.list_display = ('course','semester','program','guest_faculty','location','program_coordinator_id','number_students_in_class','course_offer_status',accept_reject)
+            self.list_display = ('course','semester','program','guest_faculty','location','number_students_in_class','course_offer_status','assessment_score',accept_reject)
             self.list_display_links = ('course', accept_reject)
         else:
-            self.list_display = ('course','semester','program','guest_faculty','location','program_coordinator_id','number_students_in_class','course_offer_status')
+            self.list_display = ('course','semester','program','guest_faculty','location','number_students_in_class','course_offer_status','assessment_score')
             self.list_display_links = ('course',)
         return super(GuestFacultyCourseOfferAdmin, self).changelist_view(request, extra_context=extra_context)
 	
@@ -845,7 +892,7 @@ class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
 	    # get application's "owner" 
             return qs.filter(guest_faculty__updated_by=request.user.id)
     class AssignCourseForm(forms.Form):
-        guestfaculty = forms.ModelChoiceField(queryset=GuestFaculty.objects.all())
+        guestfaculty = forms.ModelChoiceField(label='Guest Faculty',queryset=GuestFaculty.objects.all())
 			
     @takes_instance_or_queryset		
     def assign_course(self,request,queryset):
@@ -857,24 +904,30 @@ class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
                 count = 0
                 for course in queryset:
                     # Get Count of Faculty Offer records 
-                    faculty_course_count = GuestFacultyCourseOffer.objects.filter(course=course.course,semester=course.semester,program_id=course.program_id,guest_faculty=guestfaculty).count()
-                    # Get Program Coordinator
-                    prog_coord = Program.objects.get(program_id=course.program_id)
-                    try:   
-                        gfo = GuestFacultyCourseOffer(course=course.course,semester=course.semester,program=course.program,guest_faculty=guestfaculty,location=course.location,course_offer_status='Offered',sequence_number=faculty_course_count+1,program_coordinator_id=prog_coord.program_coordinator_id,offer_to_faculty_date=datetime.datetime.today(),number_students_in_class=course.number_of_students_in_class,max_faculty_count_reached=0)
-                        gfo.save()
-                        course.assigned_count = course.assigned_count + 1
-                        course.save()
-                        count += 1
-                        template = 'courseassignemail.txt'
-                        c = Context({'username': guestfaculty.name, 'application_url':settings.APPLICATION_URL})                    
-                        send_gfemail([guestfaculty.email],template,'Re: BITS Guest Faculty Application',c)
-                    except Error as e:
-                         pass					
+                    faculty_course_count = GuestFacultyCourseOffer.objects.filter(course=course.course,semester=course.semester,program_id=course.program_id,guest_faculty=guestfaculty,location=course.location).count()
+					
+                    # Check if record already exists and skip
+                    if faculty_course_count < 1:
+					    # Get Program Coordinator
+                        prog_coord = Program.objects.get(program_id=course.program_id)
+                        try:   
+                            gfo = GuestFacultyCourseOffer(course=course.course,semester=course.semester,program=course.program,guest_faculty=guestfaculty,location=course.location,course_offer_status='Offered',sequence_number=faculty_course_count+1,program_coordinator_id=prog_coord.program_coordinator_id,offer_to_faculty_date=datetime.datetime.today(),number_students_in_class=course.number_of_students_in_class,max_faculty_count_reached=0)
+                            gfo.save()
+                            course.assigned_count = course.assigned_count + 1
+                            course.save()
+                            count += 1
+                            template = 'courseassignemail.txt'
+                            c = Context({'username': guestfaculty.name, 'application_url':settings.APPLICATION_URL})                    
+                            send_gfemail([guestfaculty.email],template,'Re: BITS Guest Faculty Application',c)
+                        except Error as e:
+                            pass					
                 plural = ''
-                if count != 1:
-                    plural = 's'				   
-                self.message_user(request, "Successfully assigned %d Course%s." % (count, plural))
+                if count > 0:
+                    if count != 1:
+                        plural = 's'				   
+                    self.message_user(request, "Successfully assigned %d Course%s." % (count, plural))
+                else:
+                    self.message_user(request, "The allocation is not possible as the chosen faculty is already assigned this course",messages.ERROR)				    
                 return HttpResponseRedirect(request.get_full_path())
         if not form:
             form = self.AssignCourseForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
@@ -896,18 +949,40 @@ class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
 	
 admin.site.register(CourseLocationSemesterDetail, CourseLocationSemesterDetailAdmin)
 
-class GuestFacultyHonarariumAdmin(ImportMixin,admin.ModelAdmin):
+class GuestFacultyHonarariumAdmin(ImportExportMixin,admin.ModelAdmin):
     model = GuestFacultyHonararium
     resource_class = HonarariumResource
     list_display = ('course','semester','program','guest_faculty','location','course_offer_status','honorarium_given')
     fields = ('course','semester','program','guest_faculty','location','course_offer_status','honorarium_given','honorarium_text','hon_issued_on_date','hon_issued_by','honorarium_payment_mode')
     readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class')
-    list_filter = ('course','semester','program','course_offer_status',('location',admin.RelatedOnlyFieldListFilter),)
-    def has_add_permission(self, request, obj=None):
-        return False	
+    list_filter = ('course','semester','program',('location',admin.RelatedOnlyFieldListFilter),)
 
+    #def has_add_permission(self, request, obj=None):
+    #    return False	
+
+    def get_queryset(self, request):
+        qs = super(GuestFacultyHonarariumAdmin, self).get_queryset(request)
+        return qs.filter(course_offer_status='Accepted')
+	
 
 admin.site.register(GuestFacultyHonararium,GuestFacultyHonarariumAdmin)
+
+class GuestFacultyScoreAdmin(ImportExportMixin,admin.ModelAdmin):
+    model = GuestFacultyScore
+    resource_class = ScoreResource
+    list_display = ('course','semester','program','guest_faculty','location','course_offer_status','number_students_in_class','assessment_score',)
+    fields = ('course','semester','program','guest_faculty','location','course_offer_status','number_students_in_class','assessment_score','feedback')
+    readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class')
+    list_filter = ('course','semester','program',('location',admin.RelatedOnlyFieldListFilter),)
+    #def has_add_permission(self, request, obj=None):
+    #    return False	
+
+    def get_queryset(self, request):
+        qs = super(GuestFacultyScoreAdmin, self).get_queryset(request)
+        return qs.filter(course_offer_status='Accepted')	
+
+admin.site.register(GuestFacultyScore,GuestFacultyScoreAdmin)
+
 
 class FacultyClassAttendanceAdmin(ImportExportMixin,admin.ModelAdmin):
     model = FacultyClassAttendance
@@ -926,6 +1001,37 @@ class FacultyClassAttendanceAdmin(ImportExportMixin,admin.ModelAdmin):
 
 admin.site.register(FacultyClassAttendance,FacultyClassAttendanceAdmin)
 
+
+class FeedbackSurveyAdmin(admin.ModelAdmin):
+    list_display = ('survey_name','version_id','question_description',) 
+    list_display_links = ('survey_name', 'version_id',)
+    fields = ('survey_id','version_id','question_id','survey_name','question_description','question_type','mandatory',)
+    readonly_fields = ('survey_id','version_id','question_id','survey_name','question_description','question_type','mandatory',)
+
+    def has_add_permission(self, request, obj=None):
+        return False	
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+		
+admin.site.register(FeedbackSurvey, FeedbackSurveyAdmin)
+
+class GFFeedbackResultsAdmin(admin.ModelAdmin):
+    list_display = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
+    list_display_links = ('guest_faculty_pan_number',)
+    fields = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
+    readonly_fields = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
+
+    def has_add_permission(self, request, obj=None):
+        return False	
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+		
+admin.site.register(GuestFacultyFeedbackResults, GFFeedbackResultsAdmin)
+
+
+# Register User/Groups
 admin.site.register(User,UserAdmin)
 admin.site.register(Group,GroupAdmin)
 

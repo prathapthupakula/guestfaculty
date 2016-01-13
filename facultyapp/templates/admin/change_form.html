@@ -16,9 +16,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-{% if user.is_staff  %}
 &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
-{% endif %}
 &rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
 &rsaquo; {% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}
 </div>
@@ -30,17 +28,6 @@
 {% if change %}{% if not is_popup %}
   <ul class="object-tools">
     {% block object-tools-items %}
-	{% for tool in objectactions %}
-    <li class="objectaction-item" data-tool-name="{{ tool.name }}">
-      <a href='tools/{{ tool.name }}/' title="{{ tool.standard_attrs.title }}"
-         {% for k, v in tool.custom_attrs.items %}
-           {{ k }}="{{ v }}"
-         {% endfor %}
-         class="{{ tool.standard_attrs.class }}">
-      {{ tool.label|capfirst }}
-      </a>
-    </li>
-  {% endfor %}
 
     {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
     {% endblock %}
@@ -75,13 +62,7 @@
 
 {% block after_related_objects %}{% endblock %}
 
-{% block submit_buttons_bottom %}
-{% if not change %}
-<div class="submit-row"><input type="submit" value="Submit" class="default" name="_save"></div>
-{% else %}
-<div class="submit-row"><input type="submit" value="Print" class="default" name="_print" onclick="window.print();return false;"></div>
-{% endif %}
-{% endblock %}
+{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
 
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">

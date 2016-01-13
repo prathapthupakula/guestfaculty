@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+<h1>Enter Comments:</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+  {{ form.as_p }}
+
+
+    <ul>
+    {% if plan.plan_status == 'In Process' %}
+	   <input type="hidden" name="_selected_action" value="{{ plan.pk }}">
+    {% endif %}
+	</ul>
+	
+    <input type="hidden" name="action" value="submit_plan_for_review" />
+    <input type="submit" name="update" value="Update" />
+</form>
+
+{% endblock %}

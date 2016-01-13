@@ -211,18 +211,22 @@ class FacultyClassAttendance(models.Model):
 
 
 class FeedbackSurvey(models.Model):
-    survey_id = models.IntegerField()
-    version_id = models.CharField(max_length=45)
-    question_id = models.CharField(max_length=45)
-    survey_name = models.CharField(max_length=45, blank=True, null=True)
-    question_description = models.CharField(max_length=45, blank=True, null=True)
-    question_type = models.CharField(max_length=45, blank=True, null=True)
-    mandatory = models.IntegerField(blank=True, null=True)
+    survey_id = models.IntegerField(primary_key=True,editable=False)
+    version_id = models.CharField(max_length=45,editable=False)
+    question_id = models.CharField(max_length=45,editable=False)
+    survey_name = models.CharField(max_length=45, blank=True, null=True,editable=False)
+    question_description = models.CharField(max_length=45, blank=True, null=True,editable=False)
+    question_type = models.CharField(max_length=45, blank=True, null=True,editable=False)
+    mandatory = models.IntegerField(blank=True, null=True,editable=False)
 
     class Meta:
         managed = False
         db_table = 'feedback_survey'
         unique_together = (('survey_id', 'version_id', 'question_id'),)
+
+    def __str__(self):              # Returns Name wherever referenced
+        return str(self.survey_name)		
+
 
 
 class GfInterestedInDiscipline(models.Model):
@@ -372,8 +376,8 @@ class GuestFacultyCourseOffer(models.Model):
     insert_datetime = models.DateTimeField(default=datetime.datetime.now)
     update_datetime = models.DateTimeField(default=datetime.datetime.now)
     max_faculty_count_reached = models.IntegerField(default=0)
-    assessment_score = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    feedback = models.CharField(max_length=1000, blank=True, null=True)
+    assessment_score = models.DecimalField('Score',max_digits=10, decimal_places=2, blank=True, null=True)
+    feedback = models.TextField(max_length=1000, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -392,15 +396,22 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
         managed = False         
         verbose_name = 'Guest Faculty Honararium'
 		
+class GuestFacultyScore(GuestFacultyCourseOffer):
+
+    class Meta:
+        proxy = True	
+        managed = False         
+        verbose_name = 'Guest Faculty Score'
+
+		
 class GuestFacultyFeedbackResults(models.Model):
-    id = models.AutoField(primary_key=True,editable=False)
-    guest_faculty_pan_number = models.ForeignKey(GuestFaculty, db_column='guest_faculty_pan_number')
-    semester = models.ForeignKey('Semester')
-    program = models.ForeignKey('Program')
-    course = models.ForeignKey(Course)
-    survey = models.ForeignKey(FeedbackSurvey,related_name="survey")
-    survey_version = models.ForeignKey(FeedbackSurvey,related_name="survey_version")
-    survey_question = models.ForeignKey(FeedbackSurvey,related_name="survey_question")
+    guest_faculty_pan_number = models.ForeignKey(GuestFaculty,primary_key=True,db_column="guest_faculty_pan_number",related_name="guest_faculty_pan_number",editable=False)
+    semester = models.ForeignKey('Semester',primary_key=True,editable=False)
+    program = models.ForeignKey('Program',primary_key=True,editable=False)
+    course = models.ForeignKey(Course,primary_key=True,editable=False)
+    survey = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey",editable=False)
+    survey_version = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_version",editable=False)
+    survey_question = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_question",editable=False)
     student_choice = models.CharField(max_length=45, blank=True, null=True)
     student_comments = models.CharField(max_length=1000, blank=True, null=True)
     answered_date = models.DateTimeField()
@@ -409,7 +420,9 @@ class GuestFacultyFeedbackResults(models.Model):
         managed = False
         db_table = 'guest_faculty_feedback_results'
         unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)
-
+        verbose_name = 'Guest Faculty Feedback'
+        verbose_name_plural = 'Guest Faculty Feedback'
+		
 
 """class GuestFacultyHasLocation(models.Model):
     guest_faculty_faculty = models.ForeignKey(GuestFaculty)
