@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `application_users`;
 CREATE TABLE IF NOT EXISTS `application_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -11,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `application_users` (
   `last_updated_by` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `buffer_type` (
   `buffer_percentage` decimal(10,2) NOT NULL,
   `buffer_name` varchar(20) NOT NULL,
   PRIMARY KEY (`buffer_calc_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `current_semester` (
   `created_on_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `currentsemester_id` (`currentsemester_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=37 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -85,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `guest_faculty_planning_numbers` (
   KEY `	fk_guest_faculty_planning_numbers_create_user1_idx` (`created_by_id`),
   KEY `fk_guest_faculty_planning_numbers_update_user1_idx` (`updated_by_id`),
   KEY `	fk_guest_faculty_planning_numbers_approve_user1_idx` (`approved_rejected_by_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=252 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -107,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `planning_window_status` (
   KEY `fk_planning_window_status_semester1_idx` (`semester_id`),
   KEY `fk_planning_window_status_program1_idx` (`program_id`),
   KEY `fk_planning_window_status_by1_idx` (`updated_by_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=73 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 --
 -- Constraints for dumped tables
