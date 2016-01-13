@@ -12,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 import datetime
 import math
-import re, string
+import re, string,sys
 from django.core.mail import send_mail
 from django.template import Context
 from django.db.models import Q
@@ -139,7 +139,7 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
 
     model = GuestFacultyPlanningNumbers
     #resource_class = PlanningNumbers
-    list_display = ('id','location','program','course','semester','plan_status','faculty_in_database','total_faculty_required','to_be_recruited_with_buffer','version_number','current_plan_flag')
+    list_display = ('id','location','program','course','semester','plan_status','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer','version_number','current_plan_flag')
     fields = (('location','program','course'),('semester','discipline'),('faculty_in_database','total_faculty_required'),('buffer_type','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer'),'planning_comments',('program_coordinator','plan_status'),'version_number')
     readonly_fields = ('faculty_to_be_recruited','current_plan_flag','to_be_recruited_with_buffer','buffer_number','version_number','plan_status', 'program_coordinator','created_by','created_on','version_number')
     list_filter = ('program','course',CurrentSemesterFilter,'current_plan_flag','plan_status',('location',admin.RelatedOnlyFieldListFilter))
@@ -413,21 +413,15 @@ class ApplicationUsersAdminForm(forms.ModelForm):
     def clean(self):
         cd = self.cleaned_data.get('user')
         print cd
-    
-        if len(cd) < 30:
-            print len(cd)
-            try:
-                print "hareesh"
-                if re.match('\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b', cd):
-                    print 'hareesh'
-                    return 1
-                    
-                #regs = re.match('.,*', cd)
-            except AttributeError:
-                return None # no match, so m.regs will fail
+        matchObject = re.match('^[a-zA-Z0-9_@.]*$', cd)
+        if matchObject:
+            print "The string '"+cd+"' is alphanumeric"
+        else:
+            print "The string '"+cd+"' is not alphanumeric"
+            raise forms.ValidationError("Please Check The User")
 
 class ApplicationUsersAdmin(admin.ModelAdmin):
-    #form = ApplicationUsersAdminForm
+    form = ApplicationUsersAdminForm
     model = ApplicationUsers
     readonly_fields = ('application_name',)
     list_display = ('application_name','user','role_name','role_parameters','created_on','created_by','last_updated_on','last_updated_by')
