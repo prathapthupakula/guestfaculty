@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'admin_report',
     'facultyapp',
-#    'gfplan',
+    'gfplan',
 #    'timetable',
     'reports',	
     'django.contrib.admin',
