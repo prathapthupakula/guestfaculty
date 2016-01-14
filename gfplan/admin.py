@@ -15,7 +15,7 @@ import math
 import re, string,sys
 from django.core.mail import send_mail
 from django.template import Context
-from django.db.models import Q
+from django.db.models import Q,F
 from django.contrib.admin.helpers import ActionForm
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
@@ -69,16 +69,18 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
             #semester1 = self.cleaned_data.get('semester', None)
             admin=self.current_user.is_superuser
             if ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).exists():
+                print "loc"
                 aplocation=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).count()
                 if aplocation==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
 
             elif ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).exists():
+                print "pro"
                 approgram=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).count()
                 if approgram==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-
             elif ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('program')).exists():
+                print "locprog"
                 aplp=ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('location')).count()
                 if aplp==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
@@ -241,12 +243,18 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
             return qs
         elif request.user.is_staff and request.user.groups.filter(name__in=['coordinator']):
             #print "location"
-            if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():          
+            return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+            """if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
+                print "loc"          
                 cl = Coordinator.objects.get(coordinator=request.user)    
                 return qs.filter(location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
-            else:
+            elif Program.objects.filter(program_coordinator_id=request.user.id).exists():
                 pr =Program.objects.get(program_coordinator_id=request.user.id)
                 return qs.filter(program=pr.program_id).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+            else:"""
+                #print "nopanl"
+                #return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+            
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             #print request.user.id
             return qs.filter(Q(plan_status="Submitted") | Q(plan_status="Approved") | Q(plan_status="Rejected"))
@@ -412,12 +420,11 @@ admin.site.register(PlanningWindowStatus, PlanningWindowStatusAdmin)
 class ApplicationUsersAdminForm(forms.ModelForm):
     def clean(self):
         cd = self.cleaned_data.get('user')
-        print cd
         matchObject = re.match('^[a-zA-Z0-9_@.]*$', cd)
         if matchObject:
             print "The string '"+cd+"' is alphanumeric"
         else:
-            print "The string '"+cd+"' is not alphanumeric"
+            #print "The string '"+cd+"' is not alphanumeric"
             raise forms.ValidationError("Please Check The User")
 
 class ApplicationUsersAdmin(admin.ModelAdmin):
@@ -437,9 +444,16 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             if apuser==0:
                 user = User.objects.create_user(obj.user)
                 user.is_staff = True
+		user.groups.add(Group.objects.get(name='coordinator'))
                 user.save()
-            user.groups.add(Group.objects.get(name='coordinator'))
+            else:
+                #ApplicationUsers.objects.update(obj.user)
+                s = ApplicationUsers.objects.latest('id')
+                sd=s.id
+                ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
+                #ApplicationUsers.objects.all().update(id=sd+1)
             obj.save()
+            
         elif change:
             obj.created_on = datetime.datetime.today()
             obj.last_updated_on=datetime.datetime.today()
