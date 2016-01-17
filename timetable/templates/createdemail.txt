@@ -1,0 +1,19 @@
+The timetable have been created for the parameters mentioned below
+Degree:{{ degree }} 
+Location:{{ location }} 
+Batch:{{ batch }} 
+Semester:{{ semester }} 
+Program:{{ program }} 
+Discipline:{{ discipline }} 
+Organization:{{ organization }} 
+for the timetable.
+
+Created commeste:{{comments}}
+
+Submitted by:{{username}}
+
+Url of the timetable:{{application_url}}
+
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

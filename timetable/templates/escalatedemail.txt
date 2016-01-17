@@ -1,0 +1,20 @@
+Dear {{ username }},
+                 The Timetable havee been escalated by the timetable owner as timetable have not been submitted for review the parameters mentioned below
+
+Degree:
+Location:{{ location }} 
+Batch:{{ batch }} 
+Semester:{{ semester }} 
+Program:{{ program }} 
+Discipline:{{ discipline }} 
+Organization:{{ organization }} 
+for the timetable.
+
+Escalated commeste:{{comments}}
+
+Submitted by:{{username}}
+
+Url of the timetable:{{application_url}}
+
+Regards,
+BITS Pilani, Work Integrated Learning Programs team

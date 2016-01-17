@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+<h1>Enter Comments for Rejection:</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+  {{ form.as_p }}
+
+
+    <ul>
+    {% if plan.timetable_status == 'Submitted' %}
+	   <input type="hidden" name="_selected_action" value="{{ plan.pk }}">
+    {% endif %}
+	</ul>
+	
+    <input type="hidden" name="action" value="reject_plan" />
+    <input type="submit" name="update" value="Reject" />
+</form>
+
+{% endblock %}
