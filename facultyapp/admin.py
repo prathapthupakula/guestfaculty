@@ -134,7 +134,7 @@ class GFCOResource(resources.ModelResource):
     class Meta:
         model = GuestFacultyCourseOffer
         fields = ('course','location','semester','program','guest_faculty','course_offer_status','sequence_number','program_coordinator','offer_to_faculty_date','number_students_in_class','section','honorarium_given','honorarium_text','hon_issued_on_date','hon_issued_by','assessment_score','feedback')
-        import_id_fields = ('course', 'semester', 'program', 'guest_faculty', 'location', 'course_offer_status','sequence_number')
+        import_id_fields = ('course', 'semester', 'guest_faculty')
 
     def for_delete(self, row, instance):
         return self.fields['delete'].clean(row)
@@ -957,7 +957,7 @@ class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
                 count = 0
                 for course in queryset:
                     # Get Count of Faculty Offer records 
-                    faculty_course_count = GuestFacultyCourseOffer.objects.filter(course=course.course,semester=course.semester,program_id=course.program_id,guest_faculty=guestfaculty,location=course.location).count()
+                    faculty_course_count = GuestFacultyCourseOffer.objects.filter(course=course.course,semester=course.semester,guest_faculty=guestfaculty).count()
 					
                     # Check if record already exists and skip
                     if faculty_course_count < 1:

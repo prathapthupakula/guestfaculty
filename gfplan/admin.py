@@ -65,23 +65,16 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
     def clean(self):
         if not self.instance.pk:
             admin=self.current_user.is_superuser
-            if ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).exists():
+
+            if Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).exists():
                 
-                aplocation=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).count()
+                aplocation=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).count()
                 if aplocation==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-
-            elif ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).exists():
-                
-                approgram=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).count()
+            elif Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).exists():
+                approgram=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).count()
                 if approgram==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-            elif ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('program')).exists():
-                
-                aplp=ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('location')).count()
-                if aplp==0:
-                    raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-
             elif admin==True:
                 return
             else:
@@ -249,7 +242,7 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
                 return qs.filter(program=pr.program_id).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             else:
                 #print "nopanl"
-                return qs
+                return ""
             
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             #print request.user.id
@@ -375,6 +368,8 @@ class PlanningWindowStatusAdminForm(forms.ModelForm):
             currenstsem=CurrentSemester.objects.filter(currentsemester=self.cleaned_data.get('semester')).count()
             if currenstsem==0:
                     raise forms.ValidationError("Please Select current semester")
+            if self.data.get("end_date") < self.data.get("start_date"):
+                raise forms.ValidationError("End date should be greater than Start date")
 
 class  CurrentSemesterFilter1(SimpleListFilter):
     title = 'currentsemester'
@@ -427,8 +422,8 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
     form = ApplicationUsersAdminForm
     model = ApplicationUsers
     readonly_fields = ('application_name',)
-    list_display = ('application_name','user','role_name','role_parameters','created_on','created_by','last_updated_on','last_updated_by')
-    fields = ('application_name','user','role_name','role_parameters')
+    list_display = ('application_name','user','role_name','created_on','created_by','last_updated_on','last_updated_by')
+    fields = ('application_name','user','role_name',)
 
     def save_model(self, request, obj, form, change): 
         if not change:

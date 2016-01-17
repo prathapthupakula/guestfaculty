@@ -309,6 +309,8 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         if 'update' in request.POST:
             form = self.SubmitPlanforReviewForm(request.POST)
             if form.is_valid():
+                #print request.user.groups.name
+                #print "prathap"
                 count=1
                 submission_comments = form.cleaned_data['submission_comments']
                 obj.approval_rejection_comments = submission_comments
@@ -323,7 +325,6 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                     plural = 's'
                 self.message_user(request, "Submitted %d timetable%s." % (count, plural))
                 return "<script>window.history.back();</script>"
-
         if not form:
             form = self.SubmitPlanforReviewForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
   
@@ -341,7 +342,6 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         if 'update' in request.POST:
             form = self.EscalatedPlanforReviewForm(request.POST)
             if form.is_valid():
-                print obj.timetable_status
                 count = 1
                 escalation_comments = form.cleaned_data['escalation_comments']
                 obj.escalation_comments = escalation_comments
@@ -476,10 +476,10 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         obj = context['original']		
         if obj:
             if request.user.is_superuser:
-                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester).exists():
+                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester,timetable_owner=obj.milestone_plan_owner).exists():
                     if obj.timetable_status=="Created" and obj.current_version_flag== 1:
                         objectactions.extend(['escalated',])
-                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester).exists():
+                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester,timetable_owner=obj.milestone_plan_owner).exists():
                     if obj.timetable_status=="In Process" and obj.current_version_flag==1:
                         objectactions.extend(['escalated_plan_for_review',])
                     elif obj.timetable_status=="In Process" or obj.timetable_status=="Escalated/In Process" and obj.current_version_flag==1:
@@ -487,6 +487,9 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                     elif  obj.timetable_status=="Submitted" and obj.current_version_flag==1:
                         objectactions.extend(['approve_plan',])
                         objectactions.extend(['reject_plan',])
+
+                elif obj.timetable_status=="In Process" or obj.timetable_status=="Escalated/In Process" and obj.current_version_flag==1:
+                        objectactions.extend(['submit_plan_for_review',])
                 elif obj.timetable_status=="Submitted":
                     objectactions.extend(['approve_plan',])
                     objectactions.extend(['reject_plan',])
@@ -496,10 +499,10 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                     objectactions.extend(['submit_plan_for_review',])
 
             elif request.user.groups.filter(name__in=['offcampusadmin']):
-                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester).exists():
+                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester,timetable_owner=obj.milestone_plan_owner).exists():
                     if obj.timetable_status=="Created" and obj.current_version_flag== 1:
                         objectactions.extend(['escalated',])
-                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester).exists():
+                if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester,timetable_owner=obj.milestone_plan_owner).exists():
                     if obj.timetable_status=="In Process" and obj.current_version_flag==1:
                         objectactions.extend(['escalated_plan_for_review',])
                     elif obj.timetable_status=="Submitted":
@@ -565,7 +568,6 @@ class SemesterPlanDetailAdmin(admin.ModelAdmin):
         if obj: # editing an existing object
             # Check if Open record with Date range validity exists in Plan Window and allow Edit of the Record
             open_check = SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1).count()
-            print open_check
             if open_check > 0:
                 
                 return self.readonly_fields + ('event_date',)

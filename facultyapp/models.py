@@ -395,7 +395,7 @@ class GuestFacultyCourseOffer(models.Model):
     class Meta:
         managed = False
         db_table = 'guest_faculty_course_offer'
-        unique_together = (('course', 'semester', 'program', 'guest_faculty', 'location', 'course_offer_status'),)
+        unique_together = (('course', 'semester', 'guest_faculty'),)
         verbose_name = 'Guest Faculty Course Assignments'
         verbose_name_plural = 'Guest Faculty Course Assignments'
 
