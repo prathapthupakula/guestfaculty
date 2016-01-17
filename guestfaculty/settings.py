@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     'admin_report',
     'facultyapp',
     'gfplan',
-#    'timetable',
+    'timetable',
     'reports',	
     'django.contrib.admin',
     'django.contrib.auth',
