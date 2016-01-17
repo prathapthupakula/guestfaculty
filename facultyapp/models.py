@@ -69,6 +69,9 @@ class CandidateEvaluation(models.Model):
         managed = False
         db_table = 'candidate_evaluation'
         #unique_together = (('application', 'evaluation_id'),)
+        #verbose_name = 'Guest Faculty Candidate Evalution'
+        verbose_name = 'Guest Faculty Candidate Evaluation'
+        verbose_name_plural = 'Guest Faculty Candidate Evaluation'
 
     def __str__(self):              # Returns Name of Location wherever referenced
         return str(self.application)
@@ -118,6 +121,8 @@ class Coordinator(models.Model):
     class Meta:
         managed = False
         db_table = 'coordinator'
+        verbose_name = 'Coordinator Master'
+        verbose_name_plural = 'Coordinator Master'
 
     def __str__(self):              # Returns Name wherever referenced
         return self.coordinator_name	
@@ -133,6 +138,8 @@ class Course(models.Model):
     class Meta:
         managed = False
         db_table = 'course'
+        verbose_name = 'Course Master'
+        verbose_name_plural = 'Course Master'
 		
     def __str__(self):              # Returns Name wherever referenced
         return self.course_name	
@@ -154,8 +161,8 @@ class CourseLocationSemesterDetail(models.Model):
         managed = False
         db_table = 'course_location_semester_detail'
         unique_together = (('course', 'location', 'semester'),)
-        verbose_name = 'Course Semester Details'
-        verbose_name_plural = 'Course Semester Details'
+        verbose_name = 'Course Location Semester Details. Assign Course to Faculty'
+        verbose_name_plural = 'Course Location Semester Details. Assign Course to Faculty'
 		
     def __str__(self):              # Returns Name wherever referenced
         return str(self.course) + "/" + str(self.location) + "/" + str(self.discipline) + "/" + str(self.semester)
@@ -183,6 +190,8 @@ class Discipline(models.Model):
     class Meta:
         managed = False
         db_table = 'discipline'
+        verbose_name = 'Academic Discipline Master'
+        verbose_name_plural = 'Academic Discipline Master'
 
     def __str__(self):              # Returns Name wherever referenced
         return self.discipline_long_name			
@@ -204,6 +213,8 @@ class FacultyClassAttendance(models.Model):
         managed = False
         db_table = 'faculty_class_attendance'
         unique_together = (('semester', 'course', 'program', 'guest_faculty', 'class_date', 'class_time_slot'),)
+        verbose_name = 'Guest Faculty Class Attendance'
+        verbose_name_plural = 'Guest Faculty Class Attendance'
 
     def __str__(self):              # Returns Name wherever referenced
         return str(self.guest_faculty)		
@@ -223,6 +234,8 @@ class FeedbackSurvey(models.Model):
         managed = False
         db_table = 'feedback_survey'
         unique_together = (('survey_id', 'version_id', 'question_id'),)
+        verbose_name = 'Faculty Feedback'
+        verbose_name_plural = 'Faculty Feedback'
 
     def __str__(self):              # Returns Name wherever referenced
         return str(self.survey_name)		
@@ -290,8 +303,8 @@ class GuestFaculty(models.Model):
     class Meta:
         managed = False
         db_table = 'guest_faculty'
-        verbose_name = 'Guest Faculty Details'
-        verbose_name_plural = 'Guest Faculty Details'
+        verbose_name = 'Guest Faculty'
+        verbose_name_plural = 'Guest Faculty'
 
     def __str__(self):              # Returns Name of wherever referenced
         return self.name + "(" + self.guest_faculty_id + " - " + str(self.recruitment_location) + ")"
@@ -336,7 +349,7 @@ class GuestFacultyCandidate(models.Model):
         managed = False
         db_table = 'guest_faculty_candidate'
         #unique_together = (('application_id', 'applying_for_discipline'),)
-        verbose_name = 'Guest Faculty Application'
+        verbose_name = 'Guest Faculty Candidate'
 
     def __str__(self):              # Returns Name of Location wherever referenced
         return self.application_number + "(" + self.name + ")"
@@ -383,7 +396,8 @@ class GuestFacultyCourseOffer(models.Model):
         managed = False
         db_table = 'guest_faculty_course_offer'
         unique_together = (('course', 'semester', 'program', 'guest_faculty', 'location', 'course_offer_status'),)
-        verbose_name = 'Course Assignment'
+        verbose_name = 'Guest Faculty Course Assignments'
+        verbose_name_plural = 'Guest Faculty Course Assignments'
 
     def __str__(self):              # Returns Name of Location wherever referenced
         return str(self.course)		
@@ -394,14 +408,16 @@ class GuestFacultyHonararium(GuestFacultyCourseOffer):
     class Meta:
         proxy = True	
         managed = False         
-        verbose_name = 'Guest Faculty Honararium'
+        #verbose_name = 'Guest Faculty Honararium'
+        verbose_name = 'Guest Faculty Honorarium'
+        verbose_name_plural = 'Guest Faculty Honorarium'
 		
 class GuestFacultyScore(GuestFacultyCourseOffer):
 
     class Meta:
         proxy = True	
         managed = False         
-        verbose_name = 'Guest Faculty Score'
+        verbose_name = 'Guest Faculty Teaching Assessment Score'
 
 		
 class GuestFacultyFeedbackResults(models.Model):
@@ -481,6 +497,10 @@ class Location(models.Model):
     class Meta:
         managed = False
         db_table = 'location'
+        #app_label = "LOCATTAIAOAO"
+        #verbose_name = 'Coordinator Master'
+        verbose_name = 'Location Master'
+        verbose_name_plural = 'Location Master'
 
     def __str__(self):              # Returns Name of Location wherever referenced
         return self.location_name	
@@ -499,6 +519,8 @@ class Program(models.Model):
         managed = False
         db_table = 'program'
 	unique_together = (('program_coordinator'),)
+        verbose_name = 'Program Master'
+        verbose_name_plural = 'Program Master'
 
     def __str__(self):              # Returns Name wherever referenced
         return self.program_name		
@@ -539,6 +561,8 @@ class Semester(models.Model):
     class Meta:
         managed = False
         db_table = 'semester'
+        verbose_name = 'Semester Master'
+        verbose_name_plural = 'Semester Master'
 
     def __str__(self):              # Returns Name wherever referenced
         return self.semester_name	

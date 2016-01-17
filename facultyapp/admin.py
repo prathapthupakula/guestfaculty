@@ -241,7 +241,7 @@ admin.site = Admin(name='admin')
 	
 
 class LocationAdmin(admin.ModelAdmin):
-    list_filter = ['location_name']
+    list_filter = ['location_country','location_state']
     list_display = ('location_name','location_state','location_country')	# Field Value Modification while displaying
     list_display_links = ('location_name',)
     #list_display = ('location_id','location_name',upper_case_name)	# Field Value Modification while displaying
@@ -251,6 +251,21 @@ class LocationAdmin(admin.ModelAdmin):
 # search_fields = ['foreign_key__related_fieldname']	This is for foreign_key search
 #    save_on_top = True
 #    fields = ('location_name', 'location_state', 'location_country')
+
+
+    """def add_view(self, request, form_url='', extra_context=None):
+        extra_context = {'title': 'Location Master'}
+        return super(LocationAdmin, self).changeform_view(request, extra_context=extra_context)
+
+    def change_view(self, request, extra_context=None):
+        extra_context = {'title': 'Location Master'}
+        return super(LocationAdmin, self).changeform_view(request, extra_context=extra_context)"""
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Location Master'}
+        return super(LocationAdmin, self).changelist_view(request, extra_context=extra_context)
+
+
 admin.site.register(Location, LocationAdmin)
 
 
@@ -260,10 +275,12 @@ class CandidateQualificationInlineForm(ModelForm):
     class Meta:
         model = CandidateQualification
         fields = ('degree_degree','college','discipline','qualification','year_of_completion','percent_marks_cpi_cgpa','max_marks_cpi_cgpa','normalized_marks_cpi_cgpa','highest_qualification','completed')
+        #list_filter=['highest_qualification']
 		
 class CandidateQualificationInline(admin.TabularInline):
     model = CandidateQualification
     readonly_fields = ('normalized_marks_cpi_cgpa',)
+    list_filter=('highest_qualification',)
     form = CandidateQualificationInlineForm
     extra = 1
     max_num = 5	
@@ -335,6 +352,7 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
     def changelist_view(self, request, extra_context=None):
         if not request.user.is_staff:
             self.list_filter = tuple()
+        extra_context = {'title': 'Guest Faculty Candidate List'}
         return super(GuestFacultyCandidateAdmin, self).changelist_view(request, extra_context=extra_context)
 
     # Do the following upon Saving		
@@ -627,7 +645,7 @@ admin.site.register(GuestFacultyCandidate, GuestFacultyCandidateAdmin)
 
 class CandidateEvaluationAdmin(admin.ModelAdmin):
     list_filter = ['evaluation_step','evaluation_type','evaluation_result']
-    list_display = ('application','evaluation_seq_no','evaluation_step','evaluation_type','evaluation_result')
+    list_display = ('application','evaluation_type','evaluation_result','assessment_score')
     #fields = '__all__'
     #readonly_fields = '__all__',
 
@@ -639,6 +657,9 @@ class CandidateEvaluationAdmin(admin.ModelAdmin):
         for field in self.model._meta.fields:
             readonly_fields.append(field.name)
         return readonly_fields
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Guest Faculty Candidate Evaluation'}
+        return super(CandidateEvaluationAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 
 admin.site.register(CandidateEvaluation,CandidateEvaluationAdmin)
@@ -747,31 +768,58 @@ class GuestFacultyAdmin(DjangoObjectActions,admin.ModelAdmin):
     view_teach_history.label = "View Teaching History"
 
     objectactions = ('view_teach_history',)
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'WILP Guest Faculty List'}
+        return super(GuestFacultyAdmin, self).changelist_view(request, extra_context=extra_context)	
 		
 		
 admin.site.register(GuestFaculty, GuestFacultyAdmin)
 
-class CourseAdmin(admin.ModelAdmin):
+class Coure(resources.ModelResource):
+    #course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
+    class Meta:
+        model = Course
+	fields = ('course_id','course_name','course_description','number_of_lectures','dissertation_project_work',)	
+
+
+class CourseAdmin(ImportExportMixin,admin.ModelAdmin):
+    resource_class = Coure
     list_display = ('course_id','course_name','number_of_lectures','dissertation_project_work')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Course Master'}
+        return super(CourseAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 admin.site.register(Course, CourseAdmin)
 
 class DisciplineAdmin(admin.ModelAdmin):
     list_display = ('discipline_long_name','discipline_short_name')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Academic Discipline Master'}
+        return super(DisciplineAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 admin.site.register(Discipline, DisciplineAdmin)
 
 class SemesterAdmin(admin.ModelAdmin):
     list_display = ('semester_name','semester_number','year','start_date','end_date')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Semester Master'}
+        return super(SemesterAdmin, self).changelist_view(request, extra_context=extra_context)
 	
 admin.site.register(Semester, SemesterAdmin)
 
 class CoordinatorAdmin(admin.ModelAdmin):
     list_display = ('coordinator','coordinator_name','coordinator_for_location')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Location Coordinator List'}
+        return super(CoordinatorAdmin, self).changelist_view(request, extra_context=extra_context)	
 admin.site.register(Coordinator, CoordinatorAdmin)
 
 class ProgramAdmin(admin.ModelAdmin):
     list_display = ('program_name','specific_program','client_organization','program_coordinator')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Program Master'}
+        return super(ProgramAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 admin.site.register(Program, ProgramAdmin)
 
@@ -800,10 +848,11 @@ class GuestFacultyCourseOfferAdmin(ImportExportMixin,DjangoObjectActions,admin.M
     def changelist_view(self, request, extra_context=None):
         if request.user.groups.filter(name__in=['guestfaculty']).exists():
             self.list_display = ('course','semester','program','guest_faculty','location','number_students_in_class','course_offer_status','assessment_score',accept_reject)
-            self.list_display_links = ('course', accept_reject)
+            self.list_display_links = ('None', accept_reject)
         else:
             self.list_display = ('course','semester','program','guest_faculty','location','number_students_in_class','course_offer_status','assessment_score')
-            self.list_display_links = ('course',)
+            self.list_display_links = ('None',)
+        extra_context = {'title': 'View Course Assignments and Scores'}
         return super(GuestFacultyCourseOfferAdmin, self).changelist_view(request, extra_context=extra_context)
 	
     def get_queryset(self, request):
@@ -891,6 +940,10 @@ class CourseLocationSemesterDetailAdmin(ImportExportMixin,admin.ModelAdmin):
         else :
 	    # get application's "owner" 
             return qs.filter(guest_faculty__updated_by=request.user.id)
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Add/Edit Course Location Semester Details. Assign Course to Faculty'}
+        return super(CourseLocationSemesterDetailAdmin, self).changelist_view(request, extra_context=extra_context)	
     class AssignCourseForm(forms.Form):
         guestfaculty = forms.ModelChoiceField(label='Guest Faculty',queryset=GuestFaculty.objects.all())
 			
@@ -963,6 +1016,9 @@ class GuestFacultyHonarariumAdmin(ImportExportMixin,admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(GuestFacultyHonarariumAdmin, self).get_queryset(request)
         return qs.filter(course_offer_status='Accepted')
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Guest Faculty Honorarium List'}
+        return super(GuestFacultyHonarariumAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 
 admin.site.register(GuestFacultyHonararium,GuestFacultyHonarariumAdmin)
@@ -970,12 +1026,15 @@ admin.site.register(GuestFacultyHonararium,GuestFacultyHonarariumAdmin)
 class GuestFacultyScoreAdmin(ImportExportMixin,admin.ModelAdmin):
     model = GuestFacultyScore
     resource_class = ScoreResource
-    list_display = ('course','semester','program','guest_faculty','location','course_offer_status','number_students_in_class','assessment_score',)
+    list_display = ('course','semester','program','guest_faculty','location','course_offer_status','assessment_score','number_students_in_class',)
     fields = ('course','semester','program','guest_faculty','location','course_offer_status','number_students_in_class','assessment_score','feedback')
     readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class')
     list_filter = ('course','semester','program',('location',admin.RelatedOnlyFieldListFilter),)
     #def has_add_permission(self, request, obj=None):
     #    return False	
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Guest Faculty Feedback'}
+        return super(GuestFacultyScoreAdmin, self).changelist_view(request, extra_context=extra_context)	
 
     def get_queryset(self, request):
         qs = super(GuestFacultyScoreAdmin, self).get_queryset(request)
@@ -998,6 +1057,9 @@ class FacultyClassAttendanceAdmin(ImportExportMixin,admin.ModelAdmin):
             return ['course','semester','program','guest_faculty']
         else:
             return []
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'Guest Faculty Attendance Details'}
+        return super(FacultyClassAttendanceAdmin, self).changelist_view(request, extra_context=extra_context)	
 
 admin.site.register(FacultyClassAttendance,FacultyClassAttendanceAdmin)
 

@@ -19,18 +19,18 @@ class GFCandidateCountReport(GuestFacultyCandidate):
 		
 class GuestFacultyListReport(GuestFaculty):
     class Meta:
-        verbose_name, verbose_name_plural = u"Guest Faculty Analysis", u"Guest Faculty Analysis"
+        verbose_name, verbose_name_plural = u"Guest Faculty Listing with Affiliation", u"Guest Faculty Listing with Affiliation"
         proxy = True
 
 		
 class GuestFacultyActivityReport(GuestFacultyCourseOffer):
     class Meta:
-        verbose_name, verbose_name_plural = u"Guest Faculty Activity", u"Guest Faculty Activity"
+        verbose_name, verbose_name_plural = u"Guest Faculty Teaching Activity", u"Guest Faculty Teaching Activity"
         proxy = True
 
 class GuestFacultyQualificationReport(GuestFacultyQualification):
     class Meta:
-        verbose_name, verbose_name_plural = u"Guest Faculty Qualification", u"Guest Faculty Qualification"
+        verbose_name, verbose_name_plural = u"Guest Faculty Listing With Qualification", u"Guest Faculty Listing With Qualification"
         proxy = True
 
 class GuestFacultyAttendanceReport(FacultyClassAttendance):

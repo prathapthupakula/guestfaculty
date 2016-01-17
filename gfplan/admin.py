@@ -64,23 +64,20 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
 
     def clean(self):
         if not self.instance.pk:
-            #location1 = self.cleaned_data.get('location', None)
-            #program1 = self.cleaned_data.get('program', None)
-            #semester1 = self.cleaned_data.get('semester', None)
             admin=self.current_user.is_superuser
             if ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).exists():
-                print "loc"
+                
                 aplocation=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('location')).count()
                 if aplocation==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
 
             elif ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).exists():
-                print "pro"
+                
                 approgram=ApplicationUsers.objects.filter(user=self.current_user.username,role_parameters=self.cleaned_data.get('program')).count()
                 if approgram==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
             elif ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('program')).exists():
-                print "locprog"
+                
                 aplp=ApplicationUsers.objects.filter(user=self.current_user.username).filter(role_parameters=self.cleaned_data.get('location')).filter(role_parameters=self.cleaned_data.get('location')).count()
                 if aplp==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
@@ -242,18 +239,17 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
         if  request.user.is_superuser:
             return qs
         elif request.user.is_staff and request.user.groups.filter(name__in=['coordinator']):
-            #print "location"
-            return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
-            """if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
-                print "loc"          
+
+            if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
+                       
                 cl = Coordinator.objects.get(coordinator=request.user)    
                 return qs.filter(location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             elif Program.objects.filter(program_coordinator_id=request.user.id).exists():
                 pr =Program.objects.get(program_coordinator_id=request.user.id)
                 return qs.filter(program=pr.program_id).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
-            else:"""
+            else:
                 #print "nopanl"
-                #return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+                return qs
             
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             #print request.user.id

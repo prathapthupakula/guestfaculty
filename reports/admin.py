@@ -84,7 +84,7 @@ class ReportGuestFacultyListAdmin(ExportMixin,AdminNoAddPermissionMixin,ChartRep
     list_filter = ('recruited_on_date','current_organization',('recruitment_location',admin.RelatedOnlyFieldListFilter))
 
     def changelist_view(self, request, extra_context=None):
-        extra_context = {'title': 'Guest Faculty List'}
+        extra_context = {'title': 'Guest Faculty Listing With Current Affiliation'}
         return super(ReportGuestFacultyListAdmin, self).changelist_view(request, extra_context=extra_context)
 		
 admin.site.register(GuestFacultyListReport, ReportGuestFacultyListAdmin)
@@ -95,7 +95,7 @@ class ReportGuestFacultyQualificationAdmin(ExportMixin,AdminNoAddPermissionMixin
     list_filter = ('qualification','degree','qualification_discipline')
 
     def changelist_view(self, request, extra_context=None):
-        extra_context = {'title': 'Guest Faculty Qualification'}
+        extra_context = {'title': 'Guest Faculty Listing With Qualification'}
         return super(ReportGuestFacultyQualificationAdmin, self).changelist_view(request, extra_context=extra_context)
 		
 admin.site.register(GuestFacultyQualificationReport, ReportGuestFacultyQualificationAdmin)
@@ -109,7 +109,7 @@ class ReportGuestFacultyActivityAdmin(ExportMixin,AdminNoAddPermissionMixin,Char
         return qs.filter(course_offer_status="Accepted")
 
     def changelist_view(self, request, extra_context=None):
-        extra_context = {'title': 'Guest Faculty Activity'}
+        extra_context = {'title': 'Guest Faculty Listing With Teaching Activity'}
         return super(ReportGuestFacultyActivityAdmin, self).changelist_view(request, extra_context=extra_context)	
 		
 admin.site.register(GuestFacultyActivityReport, ReportGuestFacultyActivityAdmin)
