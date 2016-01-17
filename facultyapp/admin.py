@@ -1079,10 +1079,10 @@ class FeedbackSurveyAdmin(admin.ModelAdmin):
 admin.site.register(FeedbackSurvey, FeedbackSurveyAdmin)
 
 class GFFeedbackResultsAdmin(admin.ModelAdmin):
-    list_display = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
+    list_display = ('guest_faculty_pan_number','semester','program','course','survey_id','survey_version_id','survey_question_id','student_choice','student_comments','answered_date')
     list_display_links = ('guest_faculty_pan_number',)
-    fields = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
-    readonly_fields = ('guest_faculty_pan_number','semester','program','course','survey','survey_version','survey_question','student_choice','student_comments','answered_date')
+    fields = ('guest_faculty_pan_number','semester','program','course','survey_id','survey_version_id','survey_question_id','student_choice','student_comments','answered_date')
+    readonly_fields = ('guest_faculty_pan_number','semester','program','course','survey_id','survey_version_id','survey_question_id','student_choice','student_comments','answered_date')
 
     def has_add_permission(self, request, obj=None):
         return False	

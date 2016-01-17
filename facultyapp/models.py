@@ -222,7 +222,7 @@ class FacultyClassAttendance(models.Model):
 
 
 class FeedbackSurvey(models.Model):
-    survey_id = models.IntegerField(primary_key=True,editable=False)
+    survey_id = models.IntegerField(primary_key=True,editable=False,unique=True)
     version_id = models.CharField(max_length=45,editable=False)
     question_id = models.CharField(max_length=45,editable=False)
     survey_name = models.CharField(max_length=45, blank=True, null=True,editable=False)
@@ -421,13 +421,18 @@ class GuestFacultyScore(GuestFacultyCourseOffer):
 
 		
 class GuestFacultyFeedbackResults(models.Model):
-    guest_faculty_pan_number = models.ForeignKey(GuestFaculty,primary_key=True,db_column="guest_faculty_pan_number",related_name="guest_faculty_pan_number",editable=False)
+    # Commented out foreign key relations as the parent keys are not unique 
+    #guest_faculty_pan_number = models.ForeignKey(GuestFaculty,primary_key=True,db_column="guest_faculty_pan_number",related_name="guest_faculty_pan_number",editable=False,to_field="pan_number")
+    guest_faculty_pan_number = models.TextField(primary_key=True,db_column="guest_faculty_pan_number",editable=False)
     semester = models.ForeignKey('Semester',primary_key=True,editable=False)
     program = models.ForeignKey('Program',primary_key=True,editable=False)
     course = models.ForeignKey(Course,primary_key=True,editable=False)
-    survey = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey",editable=False)
-    survey_version = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_version",editable=False)
-    survey_question = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_question",editable=False)
+    #survey = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey",editable=False,to_field="survey_id")
+    survey_id = models.TextField(primary_key=True,editable=False)
+    #survey_version = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_version",editable=False,to_field="version_id")
+    survey_version_id = models.TextField(primary_key=True,editable=False)
+    #survey_question = models.ForeignKey(FeedbackSurvey,primary_key=True,related_name="survey_question",editable=False,to_field="question_id")
+    survey_question_id = models.TextField(primary_key=True,editable=False)
     student_choice = models.CharField(max_length=45, blank=True, null=True)
     student_comments = models.CharField(max_length=1000, blank=True, null=True)
     answered_date = models.DateTimeField()
@@ -435,7 +440,7 @@ class GuestFacultyFeedbackResults(models.Model):
     class Meta:
         managed = False
         db_table = 'guest_faculty_feedback_results'
-        unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)
+        #unique_together = (('guest_faculty_pan_number', 'semester', 'program', 'course', 'survey', 'survey_version', 'survey_question'),)
         verbose_name = 'Guest Faculty Feedback'
         verbose_name_plural = 'Guest Faculty Feedback'
 		
