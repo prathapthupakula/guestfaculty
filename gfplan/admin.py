@@ -65,7 +65,7 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
     def clean(self):
         if not self.instance.pk:
             admin=self.current_user.is_superuser
-
+            #loc = Coordinator.objects.get(coordinator_for_location=self.cleaned_data.get('location'))
             if Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).exists():
                 
                 aplocation=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).count()
@@ -239,10 +239,9 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
                 return qs.filter(location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             elif Program.objects.filter(program_coordinator_id=request.user.id).exists():
                 pr =Program.objects.get(program_coordinator_id=request.user.id)
-                return qs.filter(program=pr.program_id).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+                return qs.filter(program=pr.program_id,location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             else:
-                #print "nopanl"
-                return ""
+                return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             #print request.user.id

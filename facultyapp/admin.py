@@ -242,7 +242,7 @@ admin.site = Admin(name='admin')
 
 class LocationAdmin(admin.ModelAdmin):
     list_filter = ['location_country','location_state']
-    list_display = ('location_name','location_state','location_country')	# Field Value Modification while displaying
+    list_display = ('location_id','location_name','location_state','location_country')	# Field Value Modification while displaying
     list_display_links = ('location_name',)
     #list_display = ('location_id','location_name',upper_case_name)	# Field Value Modification while displaying
     #list_editable = ('location_name',)	  #Editable Grid
@@ -793,7 +793,7 @@ class CourseAdmin(ImportExportMixin,admin.ModelAdmin):
 admin.site.register(Course, CourseAdmin)
 
 class DisciplineAdmin(admin.ModelAdmin):
-    list_display = ('discipline_long_name','discipline_short_name')
+    list_display = ('discipline_id','discipline_long_name','discipline_short_name')
     def changelist_view(self, request, extra_context=None):
         extra_context = {'title': 'Academic Discipline Master'}
         return super(DisciplineAdmin, self).changelist_view(request, extra_context=extra_context)	
@@ -801,7 +801,7 @@ class DisciplineAdmin(admin.ModelAdmin):
 admin.site.register(Discipline, DisciplineAdmin)
 
 class SemesterAdmin(admin.ModelAdmin):
-    list_display = ('semester_name','semester_number','year','start_date','end_date')
+    list_display = ('semester_id','semester_name','semester_number','year','start_date','end_date')
     def changelist_view(self, request, extra_context=None):
         extra_context = {'title': 'Semester Master'}
         return super(SemesterAdmin, self).changelist_view(request, extra_context=extra_context)
@@ -816,7 +816,7 @@ class CoordinatorAdmin(admin.ModelAdmin):
 admin.site.register(Coordinator, CoordinatorAdmin)
 
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ('program_name','specific_program','client_organization','program_coordinator')
+    list_display = ('program_id','program_name','specific_program','client_organization','program_coordinator')
     def changelist_view(self, request, extra_context=None):
         extra_context = {'title': 'Program Master'}
         return super(ProgramAdmin, self).changelist_view(request, extra_context=extra_context)	

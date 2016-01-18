@@ -297,7 +297,7 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
             count=1
             if count == 1:
                 plural = 's'
-            self.message_user(request, "Submitted %d timetable%s." % (count, plural))
+            self.message_user(request, "Created %d timetable%s." % (count, plural))
             return "<script>window.history.back();</script>"
 
 
@@ -325,6 +325,9 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                     plural = 's'
                 self.message_user(request, "Submitted %d timetable%s." % (count, plural))
                 return "<script>window.history.back();</script>"
+                #if Group.objects.filter(name='offcampusadmin').exists()
+                    #print "prtahap"
+
         if not form:
             form = self.SubmitPlanforReviewForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
   
