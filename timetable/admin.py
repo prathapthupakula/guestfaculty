@@ -324,9 +324,21 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                 if count == 1:
                     plural = 's'
                 self.message_user(request, "Submitted %d timetable%s." % (count, plural))
-                return "<script>window.history.back();</script>"
                 #if Group.objects.filter(name='offcampusadmin').exists()
                     #print "prtahap"
+                count1=0
+                group = Group.objects.get(name="offcampusadmin")
+                usersList = group.user_set.all().values_list("email",flat=True)
+                for email in usersList:
+                    count1 += 1
+                    template = 'submittedemail.txt'
+                    c = Context({'username': request.user.username, 'application_url':settings.APPLICATION_URL,'degree':obj.degree,'location':obj.location,'batch':obj.batch,'program':obj.program,'semester':obj.semester,'organization':obj.client_organization,'discipline':obj.discipline,'comments':submission_comments})                    
+                    send_gfemail([email],template,'Re: BITS Guest Faculty Application',c)
+                plural = ''
+                if count1 == 1:
+                    plural = 's'
+                self.message_user(request, "Submitted %d timetable%s." % (count1, plural))
+                return "<script>window.history.back();</script>" 
 
         if not form:
             form = self.SubmitPlanforReviewForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
@@ -394,6 +406,18 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                 if count == 1:
                     plural = 's'
                 self.message_user(request, "Successfully Approved %d timetable%s." % (count, plural))
+                count1=0
+                group = Group.objects.get(name="offcampusadmin")
+                usersList = group.user_set.all().values_list("email",flat=True)
+                for email in usersList:
+                    count1 += 1
+                    template = 'approvedemail.txt'
+                    c = Context({'username': request.user.username, 'application_url':settings.APPLICATION_URL,'degree':obj.degree,'location':obj.location,'batch':obj.batch,'program':obj.program,'semester':obj.semester,'organization':obj.client_organization,'discipline':obj.discipline,'comments':submission_comments})                    
+                    send_gfemail([email],template,'Re: BITS Guest Faculty Application',c)
+                plural = ''
+                if count1 == 1:
+                    plural = 's'
+                self.message_user(request, "Successfully Approved %d timetable%s." % (count1, plural))
                 return "<script>window.history.back();</script>"
 
         if not form:
@@ -427,6 +451,18 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                 if count == 1:
                     plural = 's'
                 self.message_user(request, "Successfully Rejected %d timetable%s." % (count, plural))
+                count1=0
+                group = Group.objects.get(name="offcampusadmin")
+                usersList = group.user_set.all().values_list("email",flat=True)
+                for email in usersList:
+                    count1 += 1
+                    template = 'rejectedemail.txt'
+                    c = Context({'username': request.user.username, 'application_url':settings.APPLICATION_URL,'degree':obj.degree,'location':obj.location,'batch':obj.batch,'program':obj.program,'semester':obj.semester,'organization':obj.client_organization,'discipline':obj.discipline,'comments':submission_comments})                    
+                    send_gfemail([email],template,'Re: BITS Guest Faculty Application',c)
+                plural = ''
+                if count1 == 1:
+                    plural = 's'
+                self.message_user(request, "Successfully Rejected %d timetable%s." % (count1, plural))
                  #return HttpResponseRedirect(request.get_full_path())
                 return "<script>window.history.back();</script>"
 
@@ -470,8 +506,8 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         data.update(csrf(request)) 
         return render_to_response('admin/escalated_plan_for_review.html', data)
 				
-    escalated_plan_for_review.short_description = "ESCALATE"
-    escalated_plan_for_review.label = "ESCALATE"
+    escalated.short_description = "escalate"
+    escalated.label = "escalate"
 
     objectactions = ('submit_plan_for_review','approve_plan','reject_plan','escalated_plan_for_review','escalated')
     def get_object_actions(self, request, context, **kwargs):
@@ -524,12 +560,13 @@ class SemesterPlanDetailAdminForm(forms.ModelForm):
         # If Insert then check the following validation	
         if not self.instance.pk:
             # Check if Open Window Plan and allow entry
-            if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone__gt=0).exists():
+            if SemesterMilestone.objects.filter(milestone_short_name=self.cleaned_data.get('semester_milestone'),is_duration_milestone__gt=0).exists():
                 start_date= self.cleaned_data['start_date']
                 end_date=self.cleaned_data['end_date']
                 date =end_date-start_date
+                print date
                 duration=SemesterMilestone.objects.values_list("is_duration_milestone",flat=True)
-                if end_date<start_date and  date<duration:
+                if end_date<start_date and  date>duration:
                     raise forms.ValidationError("Please Check Start Date and End Date")
             #if start_date-end_date < MAX_DURATION_IN_DAYS
 

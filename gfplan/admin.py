@@ -65,13 +65,21 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
     def clean(self):
         if not self.instance.pk:
             admin=self.current_user.is_superuser
+	    #print Coordinator.objects.filter(coordinator=self.current_user.id)
             #loc = Coordinator.objects.get(coordinator_for_location=self.cleaned_data.get('location'))
-            if Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).exists():
-                
+            #loc=Coordinator.objects.all().values('coordinator_for_location')
+            cloc=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).exists()
+            cprg=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).exists()
+            if cloc==True and cprg==True:
+                aplocation=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).count()
+                approgram=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).count()
+                if aplocation==0 and approgram==0:
+                    raise forms.ValidationError("User doesn't have the rights to make this plan entry")
+            elif cloc==True:
                 aplocation=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).count()
                 if aplocation==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-            elif Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).exists():
+            elif cprg==True:
                 approgram=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).count()
                 if approgram==0:
                     raise forms.ValidationError("User doesn't have the rights to make this plan entry")
@@ -239,7 +247,7 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
                 return qs.filter(location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             elif Program.objects.filter(program_coordinator_id=request.user.id).exists():
                 pr =Program.objects.get(program_coordinator_id=request.user.id)
-                return qs.filter(program=pr.program_id,location=cl.coordinator_for_location).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
+                return qs.filter(program=pr.program_id).filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             else:
                 return qs.filter(Q(plan_status="In Process") | Q(plan_status="Submitted"))
             
