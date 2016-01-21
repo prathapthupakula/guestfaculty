@@ -61,8 +61,8 @@ class Organization(models.Model):
         return self.organization_name	
 class SemesterMilestone(models.Model):
     milestone_id = models.AutoField(primary_key=True, editable=False)
-    milestone_short_name = models.CharField('Milestone Code',max_length=45)
-    milestone_long_name = models.CharField('Milestone Name',null=True, blank=True ,max_length=200)
+    milestone_short_name = models.CharField(max_length=45)
+    milestone_long_name = models.CharField(null=True, blank=True ,max_length=200)
     milestone_type = models.CharField('Milestone Type',max_length=45)	
     is_duration_milestone = models.BooleanField(default=1)
     is_editable_by_owner = models.NullBooleanField(blank=True, null=True,default=0) 
@@ -80,7 +80,7 @@ class SemesterTimetableEditWindow(models.Model):
     semester = models.ForeignKey(Semester)
     program = models.ForeignKey(Program)
     location = models.ForeignKey(Location)		
-    timetable_owner = models.ForeignKey(Coordinator)
+    timetable_owner = models.ForeignKey(Coordinator,null=True, blank=True)
     status = models.CharField(max_length=15, choices=STATUS_LIST1)
     last_updated_on = models.DateTimeField('Last Updated',editable=False,default=datetime.datetime.now)
     last_updated_by = models.CharField(max_length=45)
@@ -93,7 +93,7 @@ class SemesterTimetableEditWindow(models.Model):
     class Meta:
         managed = False
         db_table = 'semester_timetable_edit_window'
-	unique_together = (('semester', 'program', 'location','timetable_owner'),)
+        unique_together = (('semester','program','location'),)
 		
     def __str__(self):              # Returns Name wherever referenced
         return str(self.timetable_owner)
@@ -101,11 +101,11 @@ class SemesterTimetableEditWindow(models.Model):
 class SemesterMilestonePlanMaster(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
     version_number = models.IntegerField(default=1)
-    semester_plan_name = models.CharField(max_length=45)
+    semester_plan_name = models.CharField(max_length=45,verbose_name='plan name')
     created_date = models.DateTimeField()
-    last_updated_date=models.DateTimeField()
+    last_updated_date=models.DateTimeField(verbose_name='last updated on')
     last_update_by= models.CharField(max_length=100)
-    timetable_status = models.CharField(max_length=45, blank=True, null=True, choices=STATUS_LIST)
+    timetable_status = models.CharField(max_length=45, blank=True, null=True, choices=STATUS_LIST,verbose_name='current state')
     current_version_flag = models.BooleanField(default=1)
     timetable_comments = models.CharField(max_length=200,blank=True, null=True)
     location = models.ForeignKey(Location)
@@ -116,9 +116,9 @@ class SemesterMilestonePlanMaster(models.Model):
     #client_organization = models.ForeignKey(Organization)
     client_organization=models.ForeignKey(Organization)
     discipline = models.ForeignKey(Discipline)
-    milestone_plan_owner = models.ForeignKey(Coordinator,null=True)
+    milestone_plan_owner = models.ForeignKey(Coordinator,verbose_name='timetable owner',null=True, blank=True)
     #program_coordinator = models.ForeignKey(Coordinator,null=True)
-    alternate_owner = models.ForeignKey(Coordinator,related_name="alternate_owner")
+    alternate_owner = models.ForeignKey(Coordinator,related_name="alternate_owner",null=True, blank=True)
     #alternate_owner= models.ForeignKey(Coordinator)
     mode_of_delivery = models.CharField(max_length=100,choices=STATUS_LIST2)
     registration_completed_in_wilp = models.BooleanField()

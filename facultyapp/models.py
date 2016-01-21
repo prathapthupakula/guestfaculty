@@ -12,7 +12,12 @@ from __future__ import unicode_literals
 from django.db import models
 import datetime
 from django.contrib.auth.models import User
+
 from django.contrib.auth.models import Group 
+from django.conf import settings
+from django.db.models.signals import class_prepared
+from django.core.validators import MaxLengthValidator
+
 
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
@@ -43,7 +48,16 @@ COUNTRY_LIST = (
     ('UK', 'United Kingdom'),
 )
 
+NEW_USERNAME_LENGTH = 254
 
+def extend_username():
+    username = User._meta.get_field("username")
+    username.max_length = NEW_USERNAME_LENGTH
+    username.help_text = ""
+    for v in username.validators:
+        if isinstance(v, MaxLengthValidator):
+            v.limit_value = NEW_USERNAME_LENGTH
+extend_username()
 
 class CandidateEvaluation(models.Model):
     application = models.ForeignKey('GuestFacultyCandidate',editable=False)
@@ -111,7 +125,7 @@ class CandidateQualification(models.Model):
 		
 class Coordinator(models.Model):
     #coordinator = models.ForeignKey(User,primary_key=True,limit_choices_to={'is_staff': True,'coordinator':'True'})
-    coordinator = models.ForeignKey(User,primary_key=True,limit_choices_to={'is_staff': True})
+    coordinator = models.ForeignKey(User,primary_key=True,limit_choices_to={'is_staff': True},verbose_name='coordinator Id',help_text='Choose Coordinator ID from existing users list')
     coordinator_name = models.CharField(max_length=45)
     coordinator_address = models.CharField(max_length=500)
     phone = models.CharField(max_length=13,blank=True, null=True)

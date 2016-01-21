@@ -12,6 +12,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+
+
 class BufferType(models.Model):
     buffer_calc_id = models.IntegerField(primary_key=True)
     buffer_percentage = models.DecimalField(max_digits=10, decimal_places=2)

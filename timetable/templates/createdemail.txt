@@ -8,7 +8,7 @@ Discipline:{{ discipline }}
 Organization:{{ organization }} 
 for the timetable.
 
-Created commeste:{{comments}}
+Created comments:{{comments}}
 
 Submitted by:{{username}}
 

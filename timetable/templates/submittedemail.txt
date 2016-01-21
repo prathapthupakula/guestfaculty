@@ -9,7 +9,7 @@ Discipline:{{ discipline }}
 Organization:{{ organization }} 
 for the timetable.
 
-Timetable commeste:{{comments}}
+Timetable comments:{{comments}}
 
 Submitted by:{{username}}
 

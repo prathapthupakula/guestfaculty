@@ -9,7 +9,7 @@ Discipline:{{ discipline }}
 Organization:{{ organization }} 
 for the timetable.
 
-Rejected comments commeste:{{comments}}
+Rejected comments:{{comments}}
 
 Submitted by:{{username}}
 

@@ -10,7 +10,7 @@ Discipline:{{ discipline }}
 Organization:{{ organization }} 
 for the timetable.
 
-Escalated commeste:{{comments}}
+Escalated comments:{{comments}}
 
 Submitted by:{{username}}
 

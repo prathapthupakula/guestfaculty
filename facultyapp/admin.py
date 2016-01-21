@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.forms import TextInput, ModelForm, Textarea, Select
 from django.db import models
@@ -56,7 +57,6 @@ STATUS_LIST = (
     ('Selected', 'Selected'),
     ('Rejected', 'Rejected'),
 )
-
 
 class GFResource(resources.ModelResource):
 
