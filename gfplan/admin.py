@@ -52,7 +52,11 @@ from import_export import resources
 from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
 from import_export import fields,widgets
 from import_export.widgets import ForeignKeyWidget, BooleanWidget
-
+#ldap iports
+from django.conf import settings
+#import ldap
+#import ldap
+#from django_auth_ldap.config import LDAPSearch
 
 
 class BufferTypeAdmin(admin.ModelAdmin):
@@ -438,6 +442,21 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             obj.last_updated_on=datetime.datetime.today()
             obj.last_updated_by=request.user.id
             obj.created_by = request.user.id
+            username= "<uid we're searching for>"
+            l = ldap.initialize(settings.LDAP_SERVER)
+
+            try:
+                l_user = l.search_s(settings.LDAP_BASE_DN, \
+                ldap.SCOPE_SUBTREE, "uid=%s" % username)
+                # Because LDAP returns results in the form:
+                # [[dn, details], [dn, details], ...]
+                dn = l_user[0][0]
+                l_user = l_user[0][1]
+            except:
+                l_user = {} # empty
+            finally:
+                l.unbind_s()
+
             apuser=User.objects.filter(username=obj.user).count()
             if apuser==0:
                 user = User.objects.create_user(obj.user)

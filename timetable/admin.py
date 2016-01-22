@@ -132,17 +132,29 @@ enddate.short_description = 'End Date'
 class SemesterPlanDetailInlineForm(ModelForm):
     class Meta:
         model = SemesterPlanDetail
-        fields = ('semester_milestone_plan_master','semester_milestone','created_date','start_date','end_date','event_date','milestone_comments',)
+        fields = ('semester_milestone_plan_master','semester_milestone','start_date','end_date','event_date','milestone_comments',)
+        
         #readonly_fields = ('version_number',)
         #fields = '__all__'
 
 class AddSemesterPlanDetailInline(admin.TabularInline):
     model = SemesterPlanDetail
-    form = SemesterPlanDetailInlineForm
+    #form = SemesterPlanDetailInlineForm
+    fields = ('semester_milestone_plan_master','semester_milestone','start_date','end_date','event_date','milestone_comments',)
+    #editable_fields=(evendate,'end_date','event_date')
+    #readonly_fields = ('start_date','end_date','event_date','semester_milestone','milestone_comments')
     extra = 0
     verbose_name_plural = 'Semester PlanDetails'
-    #fields = ['semester_milestone_plan_master','semester_milestone','created_date','start_date','end_date','event_date','milestone_comments',]
-
+    """def get_readonly_fields(self, request, obj=None):
+        fields = []
+        for field in self.model._meta.get_all_field_names():
+            print field
+            if (field == evendate):
+                if (field not in self.editable_fields):
+                    fields.append(field)
+                else:
+                    print "prtaadd"
+        return fields"""
 
 class SemesterMilestonePlanMasterAdminForm(forms.ModelForm):
     def clean(self):
@@ -173,11 +185,18 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
          form.current_user = request.user
          return form
     inlines = [AddSemesterPlanDetailInline]
+
+    def semester_milestone(self,obj):
+        print "prtaa"
+        print obj
+        return obj.get_value()
+
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             if isinstance(inline, AddSemesterPlanDetailInline) and obj is None:
                 continue
             yield inline.get_formset(request, obj), inline
+
     model=SemesterMilestonePlanMaster
     fields = (('version_number','semester_plan_name','current_version_flag','timetable_status','timetable_comments',('location','degree'),('program','semester'),('batch','client_organization'),('discipline','milestone_plan_owner'),('alternate_owner','mode_of_delivery'),('registration_completed_in_wilp','student_strength')))   
     list_display = ('semester_plan_name','timetable_status','client_organization','location_id','program','milestone_plan_owner_id','last_updated_date',timetable_action)
@@ -196,27 +215,6 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         else:
             return self.readonly_fields + ('milestone_plan_owner',)		
         return self.readonly_fields 
-    def get_queryset(self, request):
-        qs = super(SemesterMilestonePlanMasterAdmin, self).get_queryset(request)
-        if request.user.is_superuser :
-            return qs
-        elif  request.user.is_staff and request.user.groups.filter(name__in=['coordinator']):
-            if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
-                cl = Coordinator.objects.get(coordinator=request.user)
-                return qs.filter(location=cl.coordinator_for_location).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
-            else:
-                pr =Program.objects.get(program_coordinator_id=request.user.id)
-                return qs.filter(program=pr.program_id).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
-        elif request.user.groups.filter(name__in=['offcampusadmin']):
-            return qs.filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated") | Q(timetable_status="Approved") | Q(timetable_status="Rejected"))    
-        else :
-            return qs.filter(milestone_plan_owner_id=request.user)
-     # Hide Filter for Non-Staff users	
-    def changelist_view(self, request, extra_context=None):
-        if not request.user.is_staff:
-            self.list_filter = tuple()
-        extra_context = {'title': 'Semester Plan Management System'}
-        return super(SemesterMilestonePlanMasterAdmin, self).changelist_view(request, extra_context=extra_context)  
 
     def save_model(self, request, obj, form, change):
         # Allow edits/saves only on current record
@@ -310,6 +308,22 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                 plural = 's'
             self.message_user(request, "Created %d timetable%s." % (count, plural))
             return "<script>window.history.back();</script>"
+
+    def get_queryset(self, request):
+        qs = super(SemesterMilestonePlanMasterAdmin, self).get_queryset(request)
+        if request.user.is_superuser :
+            return qs
+        elif  request.user.is_staff and request.user.groups.filter(name__in=['coordinator']):
+            if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
+                cl = Coordinator.objects.get(coordinator=request.user)
+                return qs.filter(location=cl.coordinator_for_location).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
+            else:
+                pr =Program.objects.get(program_coordinator_id=request.user.id)
+                return qs.filter(program=pr.program_id).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
+        elif request.user.groups.filter(name__in=['offcampusadmin']):
+            return qs.filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated") | Q(timetable_status="Approved") | Q(timetable_status="Rejected"))    
+        else :
+            return qs
 
 
     class SubmitPlanforReviewForm(forms.Form):
@@ -567,6 +581,7 @@ class SemesterPlanDetailAdminForm(forms.ModelForm):
                 start_date= self.cleaned_data['start_date']
                 end_date=self.cleaned_data['end_date']
                 date =end_date-start_date
+                print date
                 duration=SemesterMilestone.objects.values_list("is_duration_milestone",flat=True)
                 if end_date<start_date and  date>duration:
                     raise forms.ValidationError("Please Check Start Date and End Date")
@@ -600,6 +615,8 @@ class SemesterPlanDetailAdmin(admin.ModelAdmin):
     list_display = ('semester_milestone_plan_master','version_number','semester_milestone',eventdate1,startdate1,enddate1)
     list_display_links = ('semester_milestone_plan_master',)
     readonly_fields = ('version_number',)
+    
+   
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
             # Check if Open record with Date range validity exists in Time Table Edit Window and allow Edit of the Record

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -154,6 +155,10 @@ EMAIL_USE_SSL = True
 #EMAIL_USE_TLS = True
 
 DATE_FORMAT = 'N j, Y'
+
+#ldap server details
+LDAP_SERVER = 'ldap://172.22.2.87/'
+LDAP_BASE_DN = 'ou=people,dc=bits-pilani,dc=ac,dc=in'
 
 #CUSTOM
 APPLICATION_URL = 'http://gf-varnatech.ka-sites.space/application/'

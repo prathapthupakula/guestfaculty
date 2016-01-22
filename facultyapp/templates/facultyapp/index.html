@@ -11,18 +11,24 @@
 
 {% block content %}
 <div id="content-main">
-
+	<div class="main-content">
+		<div class="col-xs-12">
+			<div class="row">
 {% if app_list %}
     {% for app in app_list %}
-        <div class="app-{{ app.app_label }} module">
-        <table>
-        <caption>
-            <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
-        </caption>
+        	<div class="col-md-6 app-{{ app.app_label }} module">
+        			
+					<div class="widget-box">
+                    	<div class="widget-header widget-header-flat widget-header-small">
+							<h5 class="widget-title"><a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a></h5>
+						</div>
+        			
         {% for model in app.models %}
-            <tr class="model-{{ model.object_name|lower }}">
+        	<div class="widget-body">
+            	<table class="table table-striped table-bordered">
+            		<tr class="model-{{ model.object_name|lower }}">
             {% if model.admin_url %}
-                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+                <th scope="row" ><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
             {% else %}
                 <th scope="row">{{ model.name }}</th>
             {% endif %}
@@ -34,13 +40,21 @@
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
+            	
+            
             </tr>
+            </table>
+        	</div>
         {% endfor %}
-        </table>
+        	
+        </div>
         </div>
     {% endfor %}
 {% else %}
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
+</div>
+</div>
+</div>
 </div>
 {% endblock %}
