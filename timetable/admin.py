@@ -210,7 +210,13 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             return qs.filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated") | Q(timetable_status="Approved") | Q(timetable_status="Rejected"))    
         else :
-            return qs.filter(milestone_plan_owner_id=request.user)  
+            return qs.filter(milestone_plan_owner_id=request.user)
+     # Hide Filter for Non-Staff users	
+    def changelist_view(self, request, extra_context=None):
+        if not request.user.is_staff:
+            self.list_filter = tuple()
+        extra_context = {'title': 'Semester Plan Management System'}
+        return super(SemesterMilestonePlanMasterAdmin, self).changelist_view(request, extra_context=extra_context)  
 
     def save_model(self, request, obj, form, change):
         # Allow edits/saves only on current record
@@ -561,28 +567,27 @@ class SemesterPlanDetailAdminForm(forms.ModelForm):
                 start_date= self.cleaned_data['start_date']
                 end_date=self.cleaned_data['end_date']
                 date =end_date-start_date
-                print date
                 duration=SemesterMilestone.objects.values_list("is_duration_milestone",flat=True)
                 if end_date<start_date and  date>duration:
                     raise forms.ValidationError("Please Check Start Date and End Date")
 
 
 def eventdate1(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=0):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=0):
         
         return obj.event_date
     else: 
         return ""
 eventdate1.short_description = 'Event Date'    
 def startdate1(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=1):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
 
         return obj.start_date
     else: 
         return ""
 startdate1.short_description = 'Start Date'    
 def enddate1(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=1):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
         return obj.end_date
     else: 
         return ""
