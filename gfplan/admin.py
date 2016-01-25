@@ -464,8 +464,8 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
                 lapp.unbind_s()
             print l_user
             print "luser"
-            send_mail('Subject here', 'Here is the message.', 'hareesh.n@varnatech.com',
-   ['prathap.t@varnatech.com'], fail_silently=False)
+            send_mail('Subject here', 'Here is the message.', 'prathap.t@varnatech.com',
+   ['hareesh.n@varnatech.com'], fail_silently=False)
             if l_user!={}:
                 print "luser"
                 apuser=User.objects.filter(username=obj.user).count()
