@@ -442,10 +442,10 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             obj.last_updated_on=datetime.datetime.today()
             obj.last_updated_by=request.user.id
             obj.created_by = request.user.id
-            username= "<uid we're searching for>"
-            l = ldap.initialize(settings.LDAP_SERVER)
+            username=obj.user
+            lapp = ldap.initialize(settings.LDAP_SERVER)
             try:
-                l_user = l.search_s(settings.LDAP_BASE_DN, \
+                l_user = lapp.search_s(settings.LDAP_BASE_DN, \
                 ldap.SCOPE_SUBTREE, "uid=%s" % username)
                 # Because LDAP returns results in the form:
                 # [[dn, details], [dn, details], ...]
@@ -454,7 +454,7 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             except:
                 l_user = {} # empty
             finally:
-                l.unbind_s()
+                lapp.unbind_s()
             if l_user!={}:
                 apuser=User.objects.filter(username=obj.user).count()
                 if apuser==0:
