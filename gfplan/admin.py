@@ -52,9 +52,9 @@ from import_export import resources
 from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
 from import_export import fields,widgets
 from import_export.widgets import ForeignKeyWidget, BooleanWidget
-#ldap iports
+#ldap imports
 from django.conf import settings
-#import ldap
+import ldap
 #import ldap
 #from django_auth_ldap.config import LDAPSearch
 
@@ -444,7 +444,6 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             obj.created_by = request.user.id
             username= "<uid we're searching for>"
             l = ldap.initialize(settings.LDAP_SERVER)
-
             try:
                 l_user = l.search_s(settings.LDAP_BASE_DN, \
                 ldap.SCOPE_SUBTREE, "uid=%s" % username)
@@ -456,18 +455,18 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
                 l_user = {} # empty
             finally:
                 l.unbind_s()
-
-            apuser=User.objects.filter(username=obj.user).count()
-            if apuser==0:
-                user = User.objects.create_user(obj.user)
-                user.is_staff = True
-		user.groups.add(Group.objects.get(name='coordinator'))
-                user.save()
-            else:
+            if l_user!={}:
+                apuser=User.objects.filter(username=obj.user).count()
+                if apuser==0:
+                    user = User.objects.create_user(obj.user)
+                    user.is_staff = True
+		    user.groups.add(Group.objects.get(name='coordinator'))
+                    user.save()
+                else:
                 #ApplicationUsers.objects.update(obj.user)
-                s = ApplicationUsers.objects.latest('id')
-                sd=s.id
-                ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
+                    s = ApplicationUsers.objects.latest('id')
+                    sd=s.id
+                    ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
                 #ApplicationUsers.objects.all().update(id=sd+1)
             obj.save()
             

@@ -1,6 +1,5 @@
 {% load i18n admin_urls admin_static admin_modify %}
-<div>HEREE</div>
-<div class="inline-groups" id="{{ inline_admin_formset.formset.prefix }}-group">
+<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
   <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
 {{ inline_admin_formset.formset.management_form }}
 <fieldset class="module">
@@ -78,7 +77,7 @@
   $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
     prefix: "{{ inline_admin_formset.formset.prefix }}",
     adminStaticPrefix: '{% static "admin/" %}',
-    addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add  {{ verbose_name }}{% endblocktrans %}",
+    addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add MileStone{% endblocktrans %}",
     deleteText: "{% trans 'Remove' %}"
   });
 })(django.jQuery);

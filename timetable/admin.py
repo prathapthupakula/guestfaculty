@@ -110,51 +110,44 @@ def send_gfemail(emailid, mailtemplate,mailtitle,c):
     send_mail(mailtitle, msg_plain, settings.EMAIL_HOST_USER, emailid, fail_silently=True)	
     return True
 def evendate(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=0):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=0):
         return obj.event_date
     else: 
         return ""
 evendate.short_description = 'Event Date'    
 def startdate(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=1):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
         return obj.start_date
     else: 
         return ""
 startdate.short_description = 'Start Date'    
 def enddate(obj):
-    if SemesterMilestone.objects.filter(milestone_long_name=obj.semester_milestone,is_duration_milestone=1):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
         return obj.end_date
     else: 
         return ""
 enddate.short_description = 'End Date' 
 
-
-class SemesterPlanDetailInlineForm(ModelForm):
-    class Meta:
-        model = SemesterPlanDetail
-        fields = ('semester_milestone_plan_master','semester_milestone','start_date','end_date','event_date','milestone_comments',)
-        
-        #readonly_fields = ('version_number',)
-        #fields = '__all__'
+class SemesterPlanDetailInline(admin.TabularInline):
+    model = SemesterPlanDetail
+    extra = 0
+    verbose_name_plural = 'Semester PlanDetails'
+    fields = ['semester_milestone',evendate,startdate,enddate]
+    readonly_fields = ('semester_milestone',evendate,startdate,enddate)	
+    def has_add_permission(self, request):
+        return False
 
 class AddSemesterPlanDetailInline(admin.TabularInline):
     model = SemesterPlanDetail
-    #form = SemesterPlanDetailInlineForm
-    fields = ('semester_milestone_plan_master','semester_milestone','start_date','end_date','event_date','milestone_comments',)
-    #editable_fields=(evendate,'end_date','event_date')
-    #readonly_fields = ('start_date','end_date','event_date','semester_milestone','milestone_comments')
+    template = "admin/tabular.html"
     extra = 0
     verbose_name_plural = 'Semester PlanDetails'
-    """def get_readonly_fields(self, request, obj=None):
-        fields = []
-        for field in self.model._meta.get_all_field_names():
-            print field
-            if (field == evendate):
-                if (field not in self.editable_fields):
-                    fields.append(field)
-                else:
-                    print "prtaadd"
-        return fields"""
+    fields = ['semester_milestone','start_date','end_date','event_date','milestone_comments']
+    
+
+
+    def has_change_permission(self, request, obj=None):
+        return False	
 
 class SemesterMilestonePlanMasterAdminForm(forms.ModelForm):
     def clean(self):
@@ -184,8 +177,8 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
          form = super(SemesterMilestonePlanMasterAdmin, self).get_form(request,obj, **kwargs)
          form.current_user = request.user
          return form
-    inlines = [AddSemesterPlanDetailInline]
-
+    #inlines = [AddSemesterPlanDetailInline]
+    inlines = [SemesterPlanDetailInline,AddSemesterPlanDetailInline]
     def semester_milestone(self,obj):
         print "prtaa"
         print obj
@@ -215,6 +208,10 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
         else:
             return self.readonly_fields + ('milestone_plan_owner',)		
         return self.readonly_fields 
+    def changelist_view(self, request, extra_context=None):
+       extra_context = {'title': 'Semester Plan Management System'}
+       return super(SemesterMilestonePlanMasterAdmin, self).changelist_view(request, extra_context=extra_context)
+
 
     def save_model(self, request, obj, form, change):
         # Allow edits/saves only on current record
