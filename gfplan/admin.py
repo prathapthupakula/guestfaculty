@@ -25,6 +25,8 @@ from django.db import IntegrityError,transaction
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+
 
 from import_export import resources
 #from import_export.admin import ExportActionModelAdmin
@@ -422,7 +424,7 @@ admin.site.register(PlanningWindowStatus, PlanningWindowStatusAdmin)
 class ApplicationUsersAdminForm(forms.ModelForm):
     def clean(self):
         cd = self.cleaned_data.get('user')
-        matchObject = re.match('^[a-zA-Z0-9_@.]*$', cd)
+        matchObject = re.match('^[a-zA-Z0-9_@.-]*$', cd)
         if matchObject:
             print "The string '"+cd+"' is alphanumeric"
         else:
@@ -447,15 +449,25 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
             try:
                 l_user = lapp.search_s(settings.LDAP_BASE_DN, \
                 ldap.SCOPE_SUBTREE, "uid=%s" % username)
+                print "sdffff"
+                print l_user
+                print "kakakakj"
                 # Because LDAP returns results in the form:
                 # [[dn, details], [dn, details], ...]
                 dn = l_user[0][0]
+                print dn
+                print "dddmnn"
                 l_user = l_user[0][1]
             except:
                 l_user = {} # empty
             finally:
                 lapp.unbind_s()
+            print l_user
+            print "luser"
+            send_mail('Subject here', 'Here is the message.', 'prathap.t@varnatech.com',
+   ['hareesh.n@varnatech.com'], fail_silently=False)
             if l_user!={}:
+                print "luser"
                 apuser=User.objects.filter(username=obj.user).count()
                 if apuser==0:
                     user = User.objects.create_user(obj.user)
