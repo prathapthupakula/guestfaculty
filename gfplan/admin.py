@@ -421,15 +421,33 @@ class PlanningWindowStatusAdmin(admin.ModelAdmin):
 
 admin.site.register(PlanningWindowStatus, PlanningWindowStatusAdmin)
 
+sso_user_details = {}
 class ApplicationUsersAdminForm(forms.ModelForm):
     def clean(self):
-        cd = self.cleaned_data.get('user')
-        matchObject = re.match('^[a-zA-Z0-9_@.-]*$', cd)
-        if matchObject:
-            print "The string '"+cd+"' is alphanumeric"
-        else:
+        global sso_user_details
+        cd_user = self.cleaned_data.get('user')
+        #matchObject = re.match('^[a-zA-Z0-9_@.-]*$', cd)
+        #if matchObject:
+        #    print "The string '"+cd+"' is alphanumeric"
+        #else:
             #print "The string '"+cd+"' is not alphanumeric"
-            raise forms.ValidationError("Please Check The User")
+        #    raise forms.ValidationError("Please Check The User")
+
+        lapp = ldap.initialize(settings.LDAP_SERVER)
+        try:
+            l_user = lapp.search_s(settings.LDAP_BASE_DN, ldap.SCOPE_SUBTREE, "uid=%s" % cd_user)
+            # Because LDAP returns results in the form:
+            # [[dn, details], [dn, details], ...]
+            dn = l_user[0][0]
+            sso_user_details = l_user[0][1]
+            #sso_user_details={'cn': ['DUMMY USER'],'description': ['{"dob": "", "country": "", "state": "", "location": "", "gender": ""}'],'employeeNumber': ['dummyuser'],'employeeType': ['staff'],'objectClass': ['inetOrgPerson'],'sn': ['.'],'uid': ['dummyuser@wilp.bits-pilani.ac.in'],'userPassword': ['dummyuser']}
+        except:
+            l_user = {} # empty
+        finally:
+            lapp.unbind_s()
+        if l_user!={}:
+            raise forms.ValidationError("Not a valid User. Please check and try again")
+
 
 class ApplicationUsersAdmin(admin.ModelAdmin):
     form = ApplicationUsersAdminForm
@@ -438,50 +456,31 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
     list_display = ('application_name','user','role_name','created_on','created_by','last_updated_on','last_updated_by')
     fields = ('application_name','user','role_name',)
 
-    def save_model(self, request, obj, form, change): 
+    def save_model(self, request, obj, form, change):
+        global sso_user_details	
         if not change:
-            obj.created_on = datetime.datetime.today()
-            obj.last_updated_on=datetime.datetime.today()
-            obj.last_updated_by=request.user.id
-            obj.created_by = request.user.id
             username=obj.user
-            lapp = ldap.initialize(settings.LDAP_SERVER)
-            try:
-                l_user = lapp.search_s(settings.LDAP_BASE_DN, \
-                ldap.SCOPE_SUBTREE, "uid=%s" % username)
-                print "sdffff"
-                print l_user
-                print "kakakakj"
-                # Because LDAP returns results in the form:
-                # [[dn, details], [dn, details], ...]
-                dn = l_user[0][0]
-                print dn
-                print "dddmnn"
-                l_user = l_user[0][1]
-            except:
-                l_user = {} # empty
-            finally:
-                lapp.unbind_s()
-            print l_user
-            print "luser"
-            send_mail('Subject here', 'Here is the message.', 'prathap.t@varnatech.com',
-   ['hareesh.n@varnatech.com'], fail_silently=False)
-            if l_user!={}:
-                print "luser"
-                apuser=User.objects.filter(username=obj.user).count()
+            if sso_user_details != {}:
+                apuser=User.objects.filter(username=obj.user).counts()
                 if apuser==0:
-                    user = User.objects.create_user(obj.user)
+                    user = User.objects.create_user(obj.user,obj.user)
+                    sso_uname = sso_user_details["cn"]
+                    user.first_name = sso_uname[0].split()[0]
+                    user.last_name = sso_uname[0].split()[1]
                     user.is_staff = True
-		    user.groups.add(Group.objects.get(name='coordinator'))
+                    user.groups.add(Group.objects.get(name='coordinator'))
                     user.save()
-                else:
+                #else:  WHY IS THIS. ALSO MAKE USER NOT EDITABLE ON CHANGE
                 #ApplicationUsers.objects.update(obj.user)
-                    s = ApplicationUsers.objects.latest('id')
-                    sd=s.id
-                    ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
+                #    s = ApplicationUsers.objects.latest('id')
+                #    sd=s.id
+                #    ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
                 #ApplicationUsers.objects.all().update(id=sd+1)
-            obj.save()
-            
+                obj.created_on = datetime.datetime.today()
+                obj.last_updated_on=datetime.datetime.today()
+                obj.last_updated_by=request.user.id
+                obj.created_by = request.user.id
+                obj.save()            
         elif change:
             obj.created_on = datetime.datetime.today()
             obj.last_updated_on=datetime.datetime.today()
