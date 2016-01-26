@@ -440,12 +440,11 @@ class ApplicationUsersAdminForm(forms.ModelForm):
             # [[dn, details], [dn, details], ...]
             dn = l_user[0][0]
             sso_user_details = l_user[0][1]
-            #sso_user_details={'cn': ['DUMMY USER'],'description': ['{"dob": "", "country": "", "state": "", "location": "", "gender": ""}'],'employeeNumber': ['dummyuser'],'employeeType': ['staff'],'objectClass': ['inetOrgPerson'],'sn': ['.'],'uid': ['dummyuser@wilp.bits-pilani.ac.in'],'userPassword': ['dummyuser']}
         except:
             l_user = {} # empty
         finally:
             lapp.unbind_s()
-        if l_user!={}:
+        if l_user=={}:
             raise forms.ValidationError("Not a valid User. Please check and try again")
 
 
@@ -461,7 +460,7 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
         if not change:
             username=obj.user
             if sso_user_details != {}:
-                apuser=User.objects.filter(username=obj.user).counts()
+                apuser=User.objects.filter(username=obj.user).count()
                 if apuser==0:
                     user = User.objects.create_user(obj.user,obj.user)
                     sso_uname = sso_user_details["cn"]
