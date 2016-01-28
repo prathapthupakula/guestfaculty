@@ -12,7 +12,7 @@
 
 
     <ul>
-    {% if plan.timetable_status == 'In Process' %}
+    {% if plan.timetable_status == 'In Process'|'Escalated/In Process' %}
 	   <input type="hidden" name="_selected_action" value="{{ plan.pk }}">
     {% endif %}
 	</ul>

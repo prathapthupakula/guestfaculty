@@ -792,6 +792,7 @@ table#change-history tbody th {
 #content {
     padding: 0px 40px;
     margin: 0;
+	margin-top:15px;
 }
 
 .dashboard #content {

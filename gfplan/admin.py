@@ -49,16 +49,12 @@ from facultyapp.models import Coordinator, Course, Discipline, Location, Program
 from .models import BufferType, GuestFacultyPlanningNumbers, PlanningWindowStatus, ApplicationUsers,CurrentSemester
 
 from import_export import resources
-#from import_export.admin import ExportActionModelAdmin
-#from import_export.admin import ImportExportModelAdmin
 from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
 from import_export import fields,widgets
 from import_export.widgets import ForeignKeyWidget, BooleanWidget
-#ldap imports
+
 from django.conf import settings
 import ldap
-#import ldap
-#from django_auth_ldap.config import LDAPSearch
 
 
 class BufferTypeAdmin(admin.ModelAdmin):
@@ -71,11 +67,18 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
     def clean(self):
         if not self.instance.pk:
             admin=self.current_user.is_superuser
-	    #print Coordinator.objects.filter(coordinator=self.current_user.id)
-            #loc = Coordinator.objects.get(coordinator_for_location=self.cleaned_data.get('location'))
-            #loc=Coordinator.objects.all().values('coordinator_for_location')
             cloc=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).exists()
             cprg=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).exists()
+
+            open_check = PlanningWindowStatus.objects.filter(status='Open',semester=self.cleaned_data.get('semester'),program=self.cleaned_data.get('program'),start_date__lte=datetime.datetime.today(),end_date__gte= datetime.datetime.today()).count()
+            if open_check < 1:
+                raise forms.ValidationError("Forecast Entry for the semester and program is not allowed as the window is closed or there no window entry made.")
+  
+             # Check if program/location/course/discipline/semester combination is valid and allow entry
+            clsd_check = CourseLocationSemesterDetail.objects.filter(semester=self.cleaned_data.get('semester'),program=self.cleaned_data.get('program'),course=self.cleaned_data["course"],location=self.cleaned_data.get('location'),discipline=self.cleaned_data["discipline"]).count()
+            if clsd_check < 1:
+                raise forms.ValidationError("The plan entry for the course, location, program, semester and discipline is incorrect. Please enter plan numbers for correct combinations only")
+
             if cloc==True and cprg==True:
                 aplocation=Coordinator.objects.filter(coordinator=self.current_user.id,coordinator_for_location=self.cleaned_data.get('location')).count()
                 approgram=Program.objects.filter(program_coordinator=self.current_user.id,program_name=self.cleaned_data.get('program')).count()
@@ -93,18 +96,6 @@ class GuestFacultyPlanningNumbersAdminForm(forms.ModelForm):
                 return
             else:
                 raise forms.ValidationError("User doesn't have the rights to make this plan entry")
-                      
-            #check for status/semester/program
-            open_check = PlanningWindowStatus.objects.filter(status='Open',semester=self.cleaned_data.get('semester'),program=self.cleaned_data.get('program'),start_date__lte=datetime.datetime.today(),end_date__gte= datetime.datetime.today()).count()
-            #print open_check
-            if open_check < 1:
-                raise forms.ValidationError("Forecast Entry for the semester and program is not allowed as the window is closed or there no window entry made.")
-  
-            # Check if program/location/course/discipline/semester combination is valid and allow entry
-            clsd_check = CourseLocationSemesterDetail.objects.filter(semester=self.cleaned_data.get('semester'),program=self.cleaned_data.get('program'),course=self.cleaned_data["course"],location=self.cleaned_data.get('location'),discipline=self.cleaned_data["discipline"]).count()
-            #print clsd_check
-            if clsd_check < 1:
-                raise forms.ValidationError("The plan entry for the course, location, program, semester and discipline is incorrect. Please enter plan numbers for correct combinations only")
         		
 
 #using customized list_filter
@@ -145,28 +136,20 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
 
     model = GuestFacultyPlanningNumbers
     #resource_class = PlanningNumbers
-    list_display = ('id','location','program','course','semester','plan_status','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer','version_number','current_plan_flag')
+    list_display = ('id','location','program','course','semester','plan_status','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer','faculty_in_database','total_faculty_required')
     fields = (('location','program','course'),('semester','discipline'),('faculty_in_database','total_faculty_required'),('buffer_type','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer'),'planning_comments',('program_coordinator','plan_status'),'version_number')
     readonly_fields = ('faculty_to_be_recruited','current_plan_flag','to_be_recruited_with_buffer','buffer_number','version_number','plan_status', 'program_coordinator','created_by','created_on','version_number')
     list_filter = ('program','course',CurrentSemesterFilter,'current_plan_flag','plan_status',('location',admin.RelatedOnlyFieldListFilter))
-
-    """def get_list_filter(self,request):
-        ids=Semester.objects.values_list('semester_id',flat=True)
-        if CurrentSemester.objects.filter(semester_id=ids).exists():
-            #print "prathap"
-            return self.list_filter + ('semester',)
-        else:
-            return ['program','course','current_plan_flag','plan_status',('location',admin.RelatedOnlyFieldListFilter)]"""
         
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
             # Check if Open record with Date range validity exists in Plan Window and allow Edit of the Record
             open_check = PlanningWindowStatus.objects.filter(status='Open',semester=obj.semester,program=obj.program,start_date__lte=datetime.datetime.today(),end_date__gte= datetime.datetime.today()).count()
-            if open_check > 0 and obj.current_plan_flag == 1:
-                return self.readonly_fields + ('location','program','course','semester','discipline','version_number')
-             
+            if open_check > 0 and obj.plan_status == "In Process":
+                return self.readonly_fields + ('version_number',)
+            elif open_check > 0 and obj.plan_status == "Approved" or obj.plan_status == "Submitted" or obj.plan_status == "Rejected":
+                return self.readonly_fields + ('location','program','course','semester','discipline','version_number') 
             else:
-            	
                 return ['location','program','course','semester','discipline','faculty_in_database','total_faculty_required','buffer_type','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer','planning_comments','program_coordinator','plan_status','version_number'] # This is for All fields			
         return self.readonly_fields
            
@@ -426,13 +409,6 @@ class ApplicationUsersAdminForm(forms.ModelForm):
     def clean(self):
         global sso_user_details
         cd_user = self.cleaned_data.get('user')
-        #matchObject = re.match('^[a-zA-Z0-9_@.-]*$', cd)
-        #if matchObject:
-        #    print "The string '"+cd+"' is alphanumeric"
-        #else:
-            #print "The string '"+cd+"' is not alphanumeric"
-        #    raise forms.ValidationError("Please Check The User")
-
         lapp = ldap.initialize(settings.LDAP_SERVER)
         try:
             l_user = lapp.search_s(settings.LDAP_BASE_DN, ldap.SCOPE_SUBTREE, "uid=%s" % cd_user)
@@ -454,7 +430,12 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
     readonly_fields = ('application_name',)
     list_display = ('application_name','user','role_name','created_on','created_by','last_updated_on','last_updated_by')
     fields = ('application_name','user','role_name',)
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+             return self.readonly_fields + ('user',)
+        return self.readonly_fields
 
+          
     def save_model(self, request, obj, form, change):
         global sso_user_details	
         if not change:
@@ -468,26 +449,18 @@ class ApplicationUsersAdmin(admin.ModelAdmin):
                     user.last_name = sso_uname[0].split()[1]
                     user.is_staff = True
                     user.groups.add(Group.objects.get(name='coordinator'))
+                    user.set_unusable_password()
                     user.save()
-                #else:  WHY IS THIS. ALSO MAKE USER NOT EDITABLE ON CHANGE
-                #ApplicationUsers.objects.update(obj.user)
-                #    s = ApplicationUsers.objects.latest('id')
-                #    sd=s.id
-                #    ApplicationUsers.objects.filter(id=sd).update(user=obj.user)
-                #ApplicationUsers.objects.all().update(id=sd+1)
                 obj.created_on = datetime.datetime.today()
                 obj.last_updated_on=datetime.datetime.today()
                 obj.last_updated_by=request.user.id
                 obj.created_by = request.user.id
                 obj.save()            
         elif change:
-            obj.created_on = datetime.datetime.today()
             obj.last_updated_on=datetime.datetime.today()
             obj.last_updated_by=request.user.id
-            obj.created_by = request.user.id	
             obj.save()
-
-                
+               
 admin.site.register(ApplicationUsers, ApplicationUsersAdmin)
 
 class CurrentSemesterAdmin(admin.ModelAdmin):

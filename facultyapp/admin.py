@@ -58,6 +58,7 @@ STATUS_LIST = (
     ('Rejected', 'Rejected'),
 )
 
+
 class GFResource(resources.ModelResource):
 
     class Meta:

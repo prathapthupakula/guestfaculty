@@ -314,9 +314,11 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
             if Coordinator.objects.filter(coordinator=request.user,coordinator_for_location__isnull=False).exists():
                 cl = Coordinator.objects.get(coordinator=request.user)
                 return qs.filter(location=cl.coordinator_for_location).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
-            else:
+            elif Program.objects.filter(program_coordinator_id=request.user.id):
                 pr =Program.objects.get(program_coordinator_id=request.user.id)
                 return qs.filter(program=pr.program_id).filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
+            else:
+                return qs.filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated"))
         elif request.user.groups.filter(name__in=['offcampusadmin']):
             return qs.filter(Q(timetable_status="In Process") | Q(timetable_status="Submitted") | Q(timetable_status="Escalated/In Process") | Q(timetable_status="Created") | Q(timetable_status="Escalated") | Q(timetable_status="Approved") | Q(timetable_status="Rejected"))    
         else :

@@ -95,6 +95,7 @@ TEMPLATES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'guestfaculty.backend.GFRemoteUserBackend',
     #'django.contrib.auth.backends.RemoteUserBackend',
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
