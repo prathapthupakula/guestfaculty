@@ -1010,6 +1010,12 @@ class GuestFacultyHonarariumAdmin(ImportExportMixin,admin.ModelAdmin):
     fields = ('course','semester','program','guest_faculty','location','course_offer_status','honorarium_given','honorarium_text','hon_issued_on_date','hon_issued_by','honorarium_payment_mode')
     readonly_fields = ('course','semester','program','guest_faculty','location','course_offer_status','program_coordinator','number_students_in_class')
     list_filter = ('course','semester','program',('location',admin.RelatedOnlyFieldListFilter),)
+    # Provide Add permissions for GuestFacultyHonararium role only and disable all others	
+    def has_add_permission(self, request, obj=None):
+        if request.user.groups.filter(name__in=['GuestFacultyHonararium']).exists():
+            return True
+        else:
+            return False
 
     #def has_add_permission(self, request, obj=None):
     #    return False	
@@ -1039,7 +1045,15 @@ class GuestFacultyScoreAdmin(ImportExportMixin,admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(GuestFacultyScoreAdmin, self).get_queryset(request)
-        return qs.filter(course_offer_status='Accepted')	
+        return qs.filter(course_offer_status='Accepted')
+    # Provide Add permissions for Guest Faculty Teaching Assessment Score role only and disable all others	
+    def has_add_permission(self, request, obj=None):
+        if request.user.groups.filter(name__in=['Guest Faculty Teaching Assessment Score']).exists():
+            return True
+        else:
+            return False  
+    	
+   
 
 admin.site.register(GuestFacultyScore,GuestFacultyScoreAdmin)
 

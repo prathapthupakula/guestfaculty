@@ -137,7 +137,7 @@ class SemesterMilestonePlanMaster(models.Model):
         return self.semester_plan_name
 class SemesterPlanDetail(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
-    semester_milestone_plan_master= models.ForeignKey(SemesterMilestonePlanMaster)
+    semester_milestone_plan_master= models.ForeignKey(SemesterMilestonePlanMaster,verbose_name='Plan Name')
     version_number = models.IntegerField(default=1)
     semester_milestone = models.ForeignKey(SemesterMilestone,verbose_name='Milestone Name')
     start_date = models.DateField()

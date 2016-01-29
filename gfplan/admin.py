@@ -126,8 +126,10 @@ class PlanningNumbers(resources.ModelResource):
 	fields = ('location','program','course','semester','plan_status','faculty_in_database','total_faculty_required','to_be_recruited_with_buffer','version_number','current_plan_flag')	
 	
 class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.ModelAdmin):
+    #change_form_template = 'admin/change_form.html'
     resource_class = PlanningNumbers
     form = GuestFacultyPlanningNumbersAdminForm
+
     #get the current user
     def get_form(self, request,obj=None, **kwargs):
          form = super(GuestFacultyPlanningNumbersAdmin, self).get_form(request,obj, **kwargs)

@@ -43,8 +43,9 @@ from django.contrib.admin import AdminSite
 from django.db.models import Sum, Avg, Count, Min, Max
 
 
-from .models import GFCandidateListReport, GFCandidateCountReport, GuestFacultyActivityReport, GuestFacultyListReport, GuestFacultyQualificationReport, GuestFacultyAttendanceReport
+from .models import GFCandidateListReport, GFCandidateCountReport, GuestFacultyActivityReport, GuestFacultyListReport, GuestFacultyQualificationReport, GuestFacultyAttendanceReport,SemesterPlanDetailReport
 from admin_report.mixins import ChartReportAdmin
+from timetable.models import SemesterMilestone
 
 class AdminNoAddPermissionMixin(object):
     def has_add_permission(self, request):
@@ -125,4 +126,36 @@ class ReportGuestFacultyAttendanceAdmin(ExportMixin,AdminNoAddPermissionMixin,Ch
 
 	
 admin.site.register(GuestFacultyAttendanceReport, ReportGuestFacultyAttendanceAdmin)
+
+def eventdate1(obj):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=0):
+        
+        return obj.event_date
+    else: 
+        return ""
+eventdate1.short_description = 'Event Date'    
+def startdate1(obj):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
+
+        return obj.start_date
+    else: 
+        return ""
+startdate1.short_description = 'Start Date'    
+def enddate1(obj):
+    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
+        return obj.end_date
+    else: 
+        return ""
+enddate1.short_description = 'End Date' 
+
+class ReportSemesterPlanDetailAdmin(ExportMixin,AdminNoAddPermissionMixin,ChartReportAdmin):
+    list_display = ('semester_milestone_plan_master','semester_milestone',eventdate1,startdate1,enddate1)	
+    list_filter = ('semester_milestone',)
+    #list_display_links = ('semester_milestone_plan_master',)
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'MileStone Details'}
+        return super(ReportSemesterPlanDetailAdmin, self).changelist_view(request, extra_context=extra_context)
+		
+admin.site.register(SemesterPlanDetailReport, ReportSemesterPlanDetailAdmin)
 
