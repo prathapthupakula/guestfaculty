@@ -181,7 +181,7 @@ class GuestFaculty(models.Model):
     guest_faculty_id = models.CharField(primary_key=True, max_length=20)
     name = models.CharField(max_length=200)
     gender = models.CharField(max_length=10)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(blank=True, null=True)
     email = models.CharField(max_length=100)
     total_experience_in_months = models.IntegerField(blank=True, null=True)
     phone = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
@@ -227,7 +227,7 @@ class GuestFacultyCandidate(models.Model):
     pan_number = models.CharField(unique=True, max_length=10)
     name = models.CharField(max_length=200)
     gender = models.CharField(max_length=10)
-    date_of_birth =models.DateField()
+    date_of_birth =models.DateField(blank=True, null=True)
     email = models.CharField(max_length=100)
     total_experience_in_months = models.IntegerField()
     phone = models.DecimalField(max_digits=10, decimal_places=5, blank=True, null=True)  # max_digits and decimal_places have been guessed, as this database handles decimal fields as float
