@@ -478,7 +478,7 @@ class GuestFacultyCandidateAdmin(BaseDjangoObjectActions,ExportMixin,admin.Model
                                 {
                                     'class':'timepicker'
                                 }))
-        location = forms.ChoiceField(choices=[ (o.location_id, o.location_name) for o in Location.objects.all()])		
+        location = forms.ChoiceField(choices=[ (l.location_id, l.location_name) for l in Location.objects.all()])		
         venue = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols': '30','rows' : '5'}))
         panel = forms.CharField(required=True, widget=forms.Textarea(attrs={'cols': '30','rows' : '5'}))
         comments = forms.CharField(widget=forms.Textarea(attrs={'cols': '30','rows' : '5'}))
