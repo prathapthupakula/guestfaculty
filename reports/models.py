@@ -5,6 +5,8 @@ import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group 
 from facultyapp.models import GuestFacultyCandidate, GuestFaculty, GuestFacultyCourseOffer, GuestFacultyQualification, FacultyClassAttendance
+from gfplan.models import PlanningWindowStatus
+from timetable.models import SemesterTimetableEditWindow  
 from timetable.models import SemesterPlanDetail
 
 
@@ -42,4 +44,12 @@ class GuestFacultyAttendanceReport(FacultyClassAttendance):
 class SemesterPlanDetailReport(SemesterPlanDetail):
     class Meta:
         verbose_name, verbose_name_plural = u"Milestone details", u"Milestone details"
+        proxy = True
+class PlanningWindowStatusReport(PlanningWindowStatus):
+    class Meta:
+        verbose_name, verbose_name_plural = u"PlanningWindow", u"PlanningWindow"
+        proxy = True
+class SemesterTimetableEditWindowReport(SemesterTimetableEditWindow):
+    class Meta:
+        verbose_name, verbose_name_plural = u"SemesterTimetableEditWindow", u"SemesterTimetableEditWindow"
         proxy = True

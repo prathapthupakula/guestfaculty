@@ -43,7 +43,7 @@ from django.contrib.admin import AdminSite
 from django.db.models import Sum, Avg, Count, Min, Max
 
 
-from .models import GFCandidateListReport, GFCandidateCountReport, GuestFacultyActivityReport, GuestFacultyListReport, GuestFacultyQualificationReport, GuestFacultyAttendanceReport,SemesterPlanDetailReport
+from .models import GFCandidateListReport, GFCandidateCountReport, GuestFacultyActivityReport, GuestFacultyListReport, GuestFacultyQualificationReport, GuestFacultyAttendanceReport, SemesterPlanDetailReport, PlanningWindowStatusReport, SemesterTimetableEditWindowReport
 from admin_report.mixins import ChartReportAdmin
 from timetable.models import SemesterMilestone
 
@@ -158,4 +158,23 @@ class ReportSemesterPlanDetailAdmin(ExportMixin,AdminNoAddPermissionMixin,ChartR
         return super(ReportSemesterPlanDetailAdmin, self).changelist_view(request, extra_context=extra_context)
 		
 admin.site.register(SemesterPlanDetailReport, ReportSemesterPlanDetailAdmin)
+class ReportPlanningWindowStatusAdmin(ExportMixin,AdminNoAddPermissionMixin,ChartReportAdmin):
+    list_display = ('semester','program','status','start_date','end_date')   
+    list_filter = ('semester','program','status')	
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'PlanningWindow'}
+        return super(ReportPlanningWindowStatusAdmin, self).changelist_view(request, extra_context=extra_context)
+		
+admin.site.register(PlanningWindowStatusReport, ReportPlanningWindowStatusAdmin)
+class ReportSemesterTimetableEditWindowAdmin(ExportMixin,AdminNoAddPermissionMixin,ChartReportAdmin):
+    list_display = ('semester_id','status','program','location','timetable_owner','dealine_creation_date','daeadline_submission_date','deadline_approval_date')  
+    list_filter = ('semester_id','status','program','location')	
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = {'title': 'SemesterTimetableEditWindow'}
+        return super(ReportSemesterTimetableEditWindowAdmin, self).changelist_view(request, extra_context=extra_context)
+		
+admin.site.register(SemesterTimetableEditWindowReport, ReportSemesterTimetableEditWindowAdmin)
+
 

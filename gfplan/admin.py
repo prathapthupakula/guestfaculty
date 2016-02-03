@@ -393,6 +393,11 @@ class PlanningWindowStatusAdmin(admin.ModelAdmin):
     list_editable = ('status','start_date','end_date')
     list_display_links =None
     list_filter = (CurrentSemesterFilter1,)
+    #def changelist_view(self, request, extra_context=None):
+    #    self.data.get('status')
+    #    if request.POST.has_key("_save"):
+      #      self.list_editable = [start_date,end_date]
+     #   return super(PlanningWindowStatusAdmin, self).changelist_view(request,  extra_context=None)
     def save_model(self, request, obj, form, change):
         if not change:
             obj.updated_by = request.user
@@ -402,8 +407,7 @@ class PlanningWindowStatusAdmin(admin.ModelAdmin):
             obj.updated_by = request.user
             obj.last_updated_date = datetime.datetime.now()
             obj.save()
-
-
+    
 admin.site.register(PlanningWindowStatus, PlanningWindowStatusAdmin)
 
 sso_user_details = {}

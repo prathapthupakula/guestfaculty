@@ -777,15 +777,28 @@ class GuestFacultyAdmin(DjangoObjectActions,admin.ModelAdmin):
 		
 admin.site.register(GuestFaculty, GuestFacultyAdmin)
 
-class Coure(resources.ModelResource):
-    #course = fields.Field(column_name='course', attribute='course', widget=ForeignKeyWidget(Course, 'course_name'))
+
+class CourseResource(resources.ModelResource):
+    #formats = ('import_export.formats.base_formats.CSV','import_export.formats.base_formats.XLS')
+    def get_export_formats(self):
+        #print self.formats[0]
+        #self.formats = ('import_export.formats.base_formats.CSV','import_export.formats.base_formats.XLS')
+        #return self.formats
+        return [f for f in self.formats if f().can_export()]
     class Meta:
         model = Course
-	fields = ('course_id','course_name','course_description','number_of_lectures','dissertation_project_work',)	
-
+        fields = ('course_id','course_name','course_description','number_of_lectures','dissertation_project_work',)
+        #exclude = ('import_export.formats.base_formats.XLS', 'import_export.formats.base_formats.JSON','import_export.formats.base_formats.CSV',)
+        
 
 class CourseAdmin(ImportExportMixin,admin.ModelAdmin):
-    resource_class = Coure
+    resource_class = CourseResource
+    def get_export_formats(self):
+        #print self.formats[0]
+        #self.formats = ('import_export.formats.base_formats.CSV','import_export.formats.base_formats.XLS')
+        #return self.formats
+        return [f for f in self.formats if f().can_export()]
+
     list_display = ('course_id','course_name','number_of_lectures','dissertation_project_work')
     def changelist_view(self, request, extra_context=None):
         extra_context = {'title': 'Course Master'}

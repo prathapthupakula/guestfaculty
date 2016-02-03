@@ -333,7 +333,7 @@ class GuestFacultyCandidate(models.Model):
     pan_number = models.CharField('PAN Number',max_length=10)
     name = models.CharField(max_length=200)
     gender = models.CharField(max_length=10, choices=GENDER_LIST)
-    date_of_birth = models.DateField(blank=True, null=True)
+    date_of_birth = models.DateField()
     email = models.EmailField(max_length=100)
     total_experience_in_months = models.IntegerField()
     phone = models.CharField(max_length=13)
