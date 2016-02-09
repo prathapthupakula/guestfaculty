@@ -10,9 +10,10 @@ from facultyapp import views
 
 
 urlpatterns = [
+    #url(r'^application/logout/$', lambda x: HttpResponseRedirect('/Shibboleth.sso/Logout')),
+    #<meta http-equiv="refresh" content="0; url=/Shibboleth.sso/Logout">
     url(r'^application/', include(admin.site.urls)),
     url(r'^faculty/', include('facultyapp.urls')),
-    #url(r'^application/', include(gf_app_site.urls)),
     url(r'^application/password_reset/$', auth_views.password_reset, name='admin_password_reset'),
     url(r'^application/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, name='password_reset_confirm'),

@@ -32,6 +32,7 @@ from django.forms import TextInput, ModelForm, Textarea, Select
 #from django.db import IntegrityError,transaction
 from django.db import IntegrityError, transaction
 from django.db.utils import OperationalError, ProgrammingError
+from django.forms.models import BaseInlineFormSet
 
 
 
@@ -56,12 +57,17 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_display_links = ('organization_name',)
 	
 admin.site.register(Organization, OrganizationAdmin)
+class SemesterMilestoneAdminAdminForm(forms.ModelForm):
+    def clean(self):
+      
+        is_editable_by_owner=self.cleaned_data['is_editable_by_owner']
+        if is_editable_by_owner==None:
+            raise forms.ValidationError("Is Editable By Owner cannot be Unknown")
+        
 class SemesterMilestoneAdmin(admin.ModelAdmin):
+    form =SemesterMilestoneAdminAdminForm
     list_display = ('milestone_id','milestone_short_name','milestone_long_name','milestone_type')
     list_display_links = ('milestone_long_name',)
-    pass
-    
-	
 admin.site.register(SemesterMilestone,SemesterMilestoneAdmin)
 
 class SemesterTimetableEditWindowAdminForm(forms.ModelForm):
@@ -109,54 +115,56 @@ def send_gfemail(emailid, mailtemplate,mailtitle,c):
     msg_plain = render_to_string('%s' %mailtemplate, c)
     send_mail(mailtitle, msg_plain, settings.EMAIL_HOST_USER, emailid, fail_silently=True)	
     return True
-def evendate(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=0):
-        return obj.event_date
-    else: 
-        return ""
-evendate.short_description = 'Event Date'    
-def startdate(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
-        return obj.start_date
-    else: 
-        return ""
-startdate.short_description = 'Start Date'    
-def enddate(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
-        return obj.end_date
-    else: 
-        return ""
-enddate.short_description = 'End Date' 
 
+
+class SemesterPlanDetailInlineFormset(forms.models.BaseInlineFormSet):
+    def clean(self):
+        super(SemesterPlanDetailInlineFormset, self).clean()
+        for form in self.forms:
+            if not hasattr(form, 'cleaned_data'):
+                continue
+            data = form.cleaned_data
+            sem = data.get('semester_milestone',0)
+            eventdate=data.get('event_date',0)
+            startdate=data.get('start_date',0)
+            enddate=data.get('end_date',0)
+            is_milestone=data.get('is_milestone',0)
+            if sem==0:
+                raise forms.ValidationError('Please select the milestone')
+            if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=1):
+                if is_milestone!=True:
+                    raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
+                if eventdate!=None:
+                    raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
+            if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=0):
+                if is_milestone!=False:
+                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+                if startdate!=None:
+                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+                if enddate!=None:
+                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+                if startdate!=None and enddate!=None:
+                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+            
 class SemesterPlanDetailInline(admin.TabularInline):
-    model = SemesterPlanDetail
-    extra = 0
-    verbose_name_plural = 'Semester PlanDetails'
-    fields = ['semester_milestone',evendate,startdate,enddate]
-    readonly_fields = ('semester_milestone',evendate,startdate,enddate)	
-    def has_add_permission(self, request):
-        return False
-
-class AddSemesterPlanDetailInline(admin.TabularInline):
+    formset = SemesterPlanDetailInlineFormset
     model = SemesterPlanDetail
     template = "admin/tabular.html"
     extra = 0
     verbose_name_plural = 'Semester PlanDetails'
-    fields = ['semester_milestone','start_date','end_date','event_date','milestone_comments']
+    fields = ['semester_milestone','start_date','end_date','event_date','milestone_comments','is_milestone']
     
 
 
-    def has_change_permission(self, request, obj=None):
-        return False	
-
 class SemesterMilestonePlanMasterAdminForm(forms.ModelForm):
     def clean(self):
-        # If Insert then check the following validation	
+        # If Insert then check the following validation 
         if not self.instance.pk:
             # Check if Open Window Plan and allow entry
             open_check = SemesterTimetableEditWindow.objects.filter(status='Open',semester=self.cleaned_data.get('semester'),program=self.cleaned_data.get('program'),location=self.cleaned_data.get('location'),dealine_creation_date__lte=datetime.datetime.today(), deadline_approval_date__gte=datetime.datetime.today()).count()
             if open_check < 1:
                 raise forms.ValidationError("The timetable for the location, program combination is not allowed as the edit window might be closed or you do not have suitable rights.")
+
 
 def timetable_action(obj):
     if SemesterTimetableEditWindow.objects.filter(daeadline_submission_date__lt=datetime.datetime.today(),location=obj.location,program=obj.program,semester=obj.semester).exists():
@@ -172,21 +180,11 @@ timetable_action.short_description = 'Submission Status'
 
 class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
     form = SemesterMilestonePlanMasterAdminForm
-    #get the current user
-    def get_form(self, request,obj=None, **kwargs):
-         form = super(SemesterMilestonePlanMasterAdmin, self).get_form(request,obj, **kwargs)
-         form.current_user = request.user
-         return form
-    #inlines = [AddSemesterPlanDetailInline]
-    inlines = [SemesterPlanDetailInline,AddSemesterPlanDetailInline]
-    def semester_milestone(self,obj):
-        print "prtaa"
-        print obj
-        return obj.get_value()
+    inlines = (SemesterPlanDetailInline,)
 
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
-            if isinstance(inline, AddSemesterPlanDetailInline) and obj is None:
+            if isinstance(inline, SemesterPlanDetailInline) and obj is None:
                 continue
             yield inline.get_formset(request, obj), inline
 
@@ -207,7 +205,7 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
                 return ['version_number','timetable_status','semester_plan_name','semester','degree','program','discipline','batch', 'client_organization','created_date','student_strength''version_number','timetable_status','semester_plan_name','location','created_date','student_strength']                		# This is for All fields
         else:
             return self.readonly_fields + ('milestone_plan_owner',)		
-        return self.readonly_fields 
+        return self.readonly_fields
     def changelist_view(self, request, extra_context=None):
        extra_context = {'title': 'Semester Plan Management System'}
        return super(SemesterMilestonePlanMasterAdmin, self).changelist_view(request, extra_context=extra_context)
@@ -291,10 +289,16 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
             obj.escalated_on_date=datetime.datetime.now()
             obj.approved_rejected_by=request.user
             obj.save()
-            mil_typ=SemesterMilestone.objects.filter(milestone_type='DEFAULT',active='1')
-            for cq in mil_typ:
-                mp=SemesterPlanDetail(semester_milestone_plan_master=obj,version_number='1',semester_milestone=cq,start_date=datetime.datetime.today(),end_date=datetime.datetime.today(),event_date=datetime.datetime.today(),date_editable='1',system_populated_date='0',created_by=request.user,created_date=datetime.datetime.today(),milestone_comments=obj.timetable_comments,last_updated_by=request.user,last_updated_date=datetime.datetime.today())
-	        mp.save()
+            if SemesterMilestone.objects.filter(milestone_type='DEFAULT',active='1',is_duration_milestone='1'):
+                mil_typ=SemesterMilestone.objects.filter(milestone_type='DEFAULT',active='1',is_duration_milestone='1')
+                for cq in mil_typ:
+                    mp=SemesterPlanDetail(semester_milestone_plan_master=obj,version_number='1',semester_milestone=cq,start_date=datetime.datetime.today(),end_date=datetime.datetime.today(),event_date=None,date_editable='1',is_milestone=True,system_populated_date='0',created_by=request.user,created_date=datetime.datetime.today(),milestone_comments=obj.timetable_comments,last_updated_by=request.user,last_updated_date=datetime.datetime.today())
+	            mp.save()
+            if SemesterMilestone.objects.filter(milestone_type='DEFAULT',active='1',is_duration_milestone='0'):
+                mil_typ=SemesterMilestone.objects.filter(milestone_type='DEFAULT',active='1',is_duration_milestone='0')
+                for cq in mil_typ:
+                    mp1=SemesterPlanDetail(semester_milestone_plan_master=obj,version_number='1',semester_milestone=cq,start_date=None,end_date=None,event_date=datetime.datetime.today(),date_editable='1',is_milestone=False,system_populated_date='0',created_by=request.user,created_date=datetime.datetime.today(),milestone_comments=obj.timetable_comments,last_updated_by=request.user,last_updated_date=datetime.datetime.today())
+	            mp1.save()
             template = 'createdemail.txt'
             c=Context({'username': request.user.username, 'application_url':settings.APPLICATION_URL,'degree':obj.degree,'location':obj.location,'batch':obj.batch,'program':obj.program,'semester':obj.semester,'organization':obj.client_organization,'discipline':obj.discipline})                    
             send_gfemail([request.user.email],template,'Re: BITS Guest Faculty Application',c) 					
@@ -580,42 +584,19 @@ class SemesterPlanDetailAdminForm(forms.ModelForm):
                 start_date= self.cleaned_data['start_date']
                 end_date=self.cleaned_data['end_date']
                 date =end_date-start_date
-                print date
                 duration=SemesterMilestone.objects.values_list("is_duration_milestone",flat=True)
                 if end_date<start_date and  date>duration:
                     raise forms.ValidationError("Please Check Start Date and End Date")
 
-
-def eventdate1(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=0):
-        
-        return obj.event_date
-    else: 
-        return ""
-eventdate1.short_description = 'Event Date'    
-def startdate1(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
-
-        return obj.start_date
-    else: 
-        return ""
-startdate1.short_description = 'Start Date'    
-def enddate1(obj):
-    if SemesterMilestone.objects.filter(milestone_short_name=obj.semester_milestone,is_duration_milestone=1):
-        return obj.end_date
-    else: 
-        return ""
-enddate1.short_description = 'End Date'    
-
-
 class SemesterPlanDetailAdmin(admin.ModelAdmin):
     form = SemesterPlanDetailAdminForm
-    fields = ('semester_milestone_plan_master','version_number','semester_milestone','start_date','end_date','event_date','date_editable','system_populated_date','milestone_comments')   
-    list_display = ('semester_milestone_plan_master','version_number','semester_milestone',eventdate1,startdate1,enddate1)
+    fields = ('semester_milestone_plan_master','version_number','semester_milestone','start_date','end_date','event_date','date_editable','is_milestone','system_populated_date','milestone_comments')   
+    list_display = ('semester_milestone_plan_master','version_number','semester_milestone','start_date','end_date','event_date','is_milestone',)
     list_display_links = ('semester_milestone_plan_master',)
     readonly_fields = ('version_number',)
     
-   
+    def has_add_permission(self, request, obj=None):
+        return False
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
             # Check if Open record with Date range validity exists in Time Table Edit Window and allow Edit of the Record

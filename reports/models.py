@@ -40,16 +40,15 @@ class GuestFacultyAttendanceReport(FacultyClassAttendance):
     class Meta:
         verbose_name, verbose_name_plural = u"Guest Faculty Attendance", u"Guest Faculty Attendance"
         proxy = True
-
-class SemesterPlanDetailReport(SemesterPlanDetail):
-    class Meta:
-        verbose_name, verbose_name_plural = u"Milestone details", u"Milestone details"
-        proxy = True
 class PlanningWindowStatusReport(PlanningWindowStatus):
     class Meta:
-        verbose_name, verbose_name_plural = u"PlanningWindow", u"PlanningWindow"
+        verbose_name, verbose_name_plural = u"GF Forecast Planning Windows", u"GF Forecast Planning Windows"
+        proxy = True
+class SemesterPlanDetailReport(SemesterPlanDetail):
+    class Meta:
+        verbose_name, verbose_name_plural = u"Timetable and Milestones Date report", u"Timetable and Milestones Date report"
         proxy = True
 class SemesterTimetableEditWindowReport(SemesterTimetableEditWindow):
     class Meta:
-        verbose_name, verbose_name_plural = u"SemesterTimetableEditWindow", u"SemesterTimetableEditWindow"
+        verbose_name, verbose_name_plural = u"Semester Timetable Edit Windows", u"Semester Timetable Edit Windows"
         proxy = True
