@@ -89,7 +89,6 @@ class SemesterTimetableEditWindowAdmin(admin.ModelAdmin):
     model = SemesterTimetableEditWindow
     list_display = ('id','semester_id','status','program','location','timetable_owner','daeadline_submission_date','deadline_approval_date')
     readonly_fields = ('last_updated_on','last_updated_by',)
-    #list_editable = ('status','daeadline_submission_date','daeadline_submission_date','deadline_approval_date')
     list_editable = ('status',)
     list_display_links =('id',)	
     #list_editable = (status)
