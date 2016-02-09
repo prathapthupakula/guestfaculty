@@ -132,12 +132,12 @@ class SemesterPlanDetailInlineFormset(forms.models.BaseInlineFormSet):
                 raise forms.ValidationError('Please select the milestone')
             if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=1):
                 if is_milestone!=True:
-                    raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
+                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
                 if eventdate!=None:
                     raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
             if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=0):
                 if is_milestone!=False:
-                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+                    raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
                 if startdate!=None:
                     raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
                 if enddate!=None:
