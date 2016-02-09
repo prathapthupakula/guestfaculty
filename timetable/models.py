@@ -45,9 +45,6 @@ class Batch(models.Model):
 class Organization(models.Model):
     organization_id = models.AutoField(primary_key=True, editable=False)
     organization_name = models.CharField(max_length=100)
-   #organization_long_time= models.IntegerField()
-   #class_date = models.DateField()
-   #organization_long_time = models.CharField(max_length=45)
     organization_long_name = models.CharField(max_length=200)
     association_duration_in_months = models.IntegerField()	
     start_year = models.IntegerField()
@@ -156,6 +153,6 @@ class SemesterPlanDetail(models.Model):
         managed = False
         db_table = 'semester_milestone_plan_detail'
 		
-    def __str__(self):              # Returns Name wherever referenced
+    def __str__(self):# Returns Name wherever referenced
         return str(self.semester_milestone)	
       
