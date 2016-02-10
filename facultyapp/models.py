@@ -537,7 +537,7 @@ class Program(models.Model):
     class Meta:
         managed = False
         db_table = 'program'
-	unique_together = (('program_coordinator'),)
+	unique_together = (('program_name'),)
         verbose_name = 'Program Master'
         verbose_name_plural = 'Program Master'
 

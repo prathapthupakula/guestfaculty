@@ -132,12 +132,12 @@ class SemesterPlanDetailInlineFormset(forms.models.BaseInlineFormSet):
                 raise forms.ValidationError('Please select the milestone')
             if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=1):
                 if is_milestone!=True:
-                    raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
+                    raise forms.ValidationError('Please Check Is Duration Milestone as there is check for Is Duration Milestone at Milestone Masters')
                 if eventdate!=None:
                     raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
             if SemesterMilestone.objects.filter(milestone_short_name=sem,is_duration_milestone=0):
                 if is_milestone!=False:
-                    raise forms.ValidationError('Event Dates cannot be entered for duration milestones')
+                    raise forms.ValidationError('Please Uncheck Is Duration Milestone as there is no check for Is Duration Milestone at Milestone Masters')
                 if startdate!=None:
                     raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
                 if enddate!=None:
@@ -151,7 +151,8 @@ class SemesterPlanDetailInline(admin.TabularInline):
     template = "admin/tabular.html"
     extra = 0
     verbose_name_plural = 'Semester PlanDetails'
-    fields = ['semester_milestone','start_date','end_date','event_date','milestone_comments','is_milestone']
+    fields = ['semester_milestone','is_milestone','start_date','end_date','event_date','milestone_comments']
+
     
 
 
@@ -621,3 +622,4 @@ class SemesterPlanDetailAdmin(admin.ModelAdmin):
             obj.created_by=request.user
             obj.save()
 admin.site.register(SemesterPlanDetail,SemesterPlanDetailAdmin)
+admin.site.unregister(SemesterPlanDetail)
