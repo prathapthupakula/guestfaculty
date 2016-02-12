@@ -187,10 +187,12 @@ class Degree(models.Model):
     degree_id = models.AutoField(primary_key=True,editable=False)
     degree_full_name = models.CharField(max_length=200, blank=True, null=True)
     degree_short_name = models.CharField(max_length=45, blank=True, null=True)
-
+    
     class Meta:
         managed = False
         db_table = 'degree'
+        verbose_name_plural = 'Degree Master'
+
 
     def __str__(self):              # Returns Name wherever referenced
         return self.degree_full_name	

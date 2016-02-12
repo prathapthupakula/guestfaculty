@@ -33,6 +33,13 @@ from django.forms import TextInput, ModelForm, Textarea, Select
 from django.db import IntegrityError, transaction
 from django.db.utils import OperationalError, ProgrammingError
 from django.forms.models import BaseInlineFormSet
+from django.forms.widgets import Widget
+from django.forms.utils import flatatt
+from django.utils.html import format_html
+from django.db import models
+
+
+
 
 
 
@@ -144,17 +151,40 @@ class SemesterPlanDetailInlineFormset(forms.models.BaseInlineFormSet):
                     raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
                 if startdate!=None and enddate!=None:
                     raise forms.ValidationError('Start and End Dates cannot be entered for event milestones')
-            
+
+
+class ReadOnlyInput(Widget):
+
+    def render(self, name, value, attrs=None):
+        if value is None:
+            value = ''
+        final_attrs = self.build_attrs(attrs, type='hidden',
+                                       name=name, value=value)
+        return format_html('<input{} />{}', flatatt(final_attrs), value)
+
+
+class SemesterPlanDetailAdminForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SemesterPlanDetailAdminForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['semester_milestone'].widget = ReadOnlyInput()
+            self.fields['is_milestone'].widget = ReadOnlyInput()
+
+
 class SemesterPlanDetailInline(admin.TabularInline):
     formset = SemesterPlanDetailInlineFormset
+    form=SemesterPlanDetailAdminForm
     model = SemesterPlanDetail
+    #model = SemesterPlanDetail.semester_milestone_plan_master.through
     template = "admin/tabular.html"
     extra = 0
     verbose_name_plural = 'Semester PlanDetails'
     fields = ['semester_milestone','is_milestone','start_date','end_date','event_date','milestone_comments']
 
-    
 
+    #exclude = ['semester_milestone','is_milestone']
+    #fields = ['semester_milestone']
 
 class SemesterMilestonePlanMasterAdminForm(forms.ModelForm):
     def clean(self):
@@ -175,13 +205,18 @@ def timetable_action(obj):
             return "Delayed. Timetable should be Approved by now"
     elif obj.timetable_status == "": 
         return "Not Created"
-timetable_action.short_description = 'Submission Status'    
+timetable_action.short_description = 'Submission Status' 
+
+
+#def make_published(modeladmin, request, queryset):
+#    queryset.update(timetable_status)
+#make_published.short_description = "Mark selected stories as published"
+
 
 
 class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
     form = SemesterMilestonePlanMasterAdminForm
     inlines = (SemesterPlanDetailInline,)
-
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             if isinstance(inline, SemesterPlanDetailInline) and obj is None:
@@ -189,12 +224,14 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
             yield inline.get_formset(request, obj), inline
 
     model=SemesterMilestonePlanMaster
+
     fields = (('version_number','semester_plan_name','current_version_flag','timetable_status','timetable_comments',('location','degree'),('program','semester'),('batch','client_organization'),('discipline','milestone_plan_owner'),('alternate_owner','mode_of_delivery'),('registration_completed_in_wilp','student_strength')))   
     list_display = ('semester_plan_name','timetable_status','client_organization','location_id','program','milestone_plan_owner_id','last_updated_date',timetable_action)
     readonly_fields = ('version_number','timetable_status',)
     list_filter = ('semester','program','timetable_status',('location',admin.RelatedOnlyFieldListFilter))
     list_display_links = ('semester_plan_name',)
-
+    #objectactions = ('semtimetable',)
+    #objectactions = [make_published]
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
             # Check if Open record with Date range validity exists in time table edit Window and allow Edit of the Record
@@ -575,7 +612,7 @@ class SemesterMilestonePlanMasterAdmin(DjangoObjectActions,admin.ModelAdmin):
 admin.site.register(SemesterMilestonePlanMaster, SemesterMilestonePlanMasterAdmin)
 
 
-class SemesterPlanDetailAdminForm(forms.ModelForm):
+"""class SemesterPlanDetailAdminForm(forms.ModelForm):
     def clean(self):
         # If Insert then check the following validation	
         if not self.instance.pk:
@@ -586,10 +623,10 @@ class SemesterPlanDetailAdminForm(forms.ModelForm):
                 date =end_date-start_date
                 duration=SemesterMilestone.objects.values_list("is_duration_milestone",flat=True)
                 if end_date<start_date and  date>duration:
-                    raise forms.ValidationError("Please Check Start Date and End Date")
+                    raise forms.ValidationError("Please Check Start Date and End Date")"""
 
 class SemesterPlanDetailAdmin(admin.ModelAdmin):
-    form = SemesterPlanDetailAdminForm
+    #form = SemesterPlanDetailAdminForm
     fields = ('semester_milestone_plan_master','version_number','semester_milestone','start_date','end_date','event_date','date_editable','is_milestone','system_populated_date','milestone_comments')   
     list_display = ('semester_milestone_plan_master','version_number','semester_milestone','start_date','end_date','event_date','is_milestone',)
     list_display_links = ('semester_milestone_plan_master',)

@@ -107,7 +107,7 @@ class ApplicationUsers(models.Model):
         return self.user
 class CurrentSemester(models.Model):
     id = models.AutoField(primary_key=True, editable=False)
-    currentsemester = models.ForeignKey(Semester,blank=True, null=True, on_delete=models.SET_NULL)
+    currentsemester = models.ForeignKey(Semester,null=True, on_delete=models.SET_NULL)
     created_on_date = models.DateTimeField(editable=True,default=datetime.datetime.now)
     def delete(self):
         super(CurrentSemester, self).delete() # Call the "real" save() method.

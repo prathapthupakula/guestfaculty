@@ -47,7 +47,7 @@ from django.contrib.admin import AdminSite
 
 from admin_report.mixins import ChartReportAdmin
 
-from .models import Location, GuestFacultyCandidate, Program, CandidateQualification, CandidateEvaluation, GuestFaculty, GuestFacultyQualification, GfInterestedInDiscipline, Course, Discipline, Semester, CourseLocationSemesterDetail, Coordinator, GuestFacultyCourseOffer, GuestFacultyHonararium, FacultyClassAttendance, FeedbackSurvey, GuestFacultyFeedbackResults, GuestFacultyScore
+from .models import Location, GuestFacultyCandidate, Program, CandidateQualification, CandidateEvaluation, GuestFaculty, GuestFacultyQualification, GfInterestedInDiscipline, Course, Discipline, Semester, CourseLocationSemesterDetail, Coordinator, GuestFacultyCourseOffer, GuestFacultyHonararium, FacultyClassAttendance, FeedbackSurvey, GuestFacultyFeedbackResults, GuestFacultyScore, Degree
 
 
 STATUS_LIST = (
@@ -57,6 +57,7 @@ STATUS_LIST = (
     ('Selected', 'Selected'),
     ('Rejected', 'Rejected'),
 )
+
 
 
 class GFResource(resources.ModelResource):
@@ -813,6 +814,10 @@ class DisciplineAdmin(admin.ModelAdmin):
         return super(DisciplineAdmin, self).changelist_view(request, extra_context=extra_context)	
 	
 admin.site.register(Discipline, DisciplineAdmin)
+
+class DegreeAdmin(admin.ModelAdmin):
+    list_display = ('degree_id','degree_full_name','degree_short_name')
+admin.site.register(Degree, DegreeAdmin)
 
 class SemesterAdmin(admin.ModelAdmin):
     list_display = ('semester_id','semester_name','semester_number','year','start_date','end_date')
