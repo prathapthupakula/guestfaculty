@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls admin_static admin_modify %}
-
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 {{ media }}
@@ -82,7 +81,6 @@
 <div class="submit-row"><input type="submit" value="Print" class="default" name="_print" onclick="window.print();return false;"></div>
 {% endif %}
 {% endblock %}
-
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">
         (function($) {

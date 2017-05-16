@@ -6,6 +6,10 @@ Time : {{ time }}
 Location: {{ location }} 
 Venue : {{ venue }} 
 
+Please use the link below to CONFIRM or DECLINE the proposed interview time AS SOON AS POSSIBLE.
+
+http://192.168.1.177:8080/application/login/?next=/application/
+
 You are required to be at the venue 30 mins before the interview time. Please come with original documents for your identification, qualification and work experience. 
 
 Looking forward to meeting you in person.

@@ -1,0 +1,309 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+  {% if cl.formset %}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+	  .results {
+                width: 600px;
+            }
+            
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+{% if action_form %}{% if actions_on_top or actions_on_bottom %}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+
+</script>
+{% endif %}{% endif %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
+&rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+
+    {% block object-tools %}
+      {% if has_add_permission %}
+        <ul class="object-tools">
+          {% block object-tools-items %}
+            <li>
+              {% url cl.opts|admin_urlname:'add' as add_url %}
+              <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
+                {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+              </a>
+            </li>
+          {% endblock %}
+        </ul>
+      {% endif %}
+     
+    {% endblock %}
+    {% if cl.formset.errors %}
+        <p class="errornote">
+        {% if cl.formset.total_error_count == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+        </p>
+        {{ cl.formset.non_form_errors }}
+    {% endif %}
+    <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+      {% block search %}{% search_form cl %}{% endblock %}
+      {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
+
+      {% block filters %}
+        {% if cl.has_filters %}
+          <div id="changelist-filter">
+            <h2>{% trans 'Filter' %}</h2>
+            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+          </div>
+        {% endif %}
+      {% endblock %}
+
+      <form id="changelist-form" action="" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% if cl.formset %}
+         <div></div>
+        <div >{{ cl.formset.management_form }}</div>
+      {% endif %}
+
+      {% block result_list %}
+          {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+          {% result_list cl %}
+          {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+          <script type="text/javascript">
+          (function($) {
+          $(document).ready(function($) {          
+          
+          
+		var list = $('input[id $= -current_faculty_flag]');
+		for(var String = 0;String < list.length;String++)
+		{
+			var lower_gap_id="id_form-"+String+"-lower_tech_interval_gap";
+			var upper_gap_id="id_form-"+String+"-upper_tech_interval_gap";
+                        var lower=$("#"+lower_gap_id).val();
+                        var upper=$("#"+upper_gap_id).val();
+			if($("#id_form-"+String+"-current_faculty_flag").is(':checked') || $("#id_form-"+String+"-inactive_faculty_flag").is(':checked'))
+			{
+				$("#"+lower_gap_id).val("").prop('readonly', true);
+				$("#"+upper_gap_id).val("").prop('readonly', true);
+			}
+				else
+			{
+				$("#"+lower_gap_id).prop('readonly', false);
+				$("#"+upper_gap_id).prop('readonly', false);
+			}
+			
+			
+			var current_flag_id="id_form-"+String+"-current_faculty_flag";
+			var inactive_faculty_id="id_form-"+String+"-inactive_faculty_flag";
+                   
+                      
+			if(($("#"+lower_gap_id).val()!="") || ($("#"+upper_gap_id).val()!=""))
+			{
+				$("#"+current_flag_id).attr("disabled", true);
+				$("#"+inactive_faculty_id).attr("disabled", true);
+			}
+			else
+			{
+				$("#"+current_flag_id).attr("disabled", false);
+				$("#"+inactive_faculty_id).attr("disabled", false);
+			
+			}
+		        	
+		}
+            $('input[id $= -current_faculty_flag]').bind("click",function () {
+
+            var id=this.id;
+	    var String = id.split(/[--]/);
+            var lower_gap_id="id_form-"+String[1]+"-lower_tech_interval_gap";
+            var upper_gap_id="id_form-"+String[1]+"-upper_tech_interval_gap";
+            if($(this).is(':checked') == true)
+            {
+
+                $("#"+lower_gap_id).val("").prop('readonly', true);
+                $("#"+upper_gap_id).val("").prop('readonly', true);
+            }
+            else
+            {
+                $("#"+lower_gap_id).val("").prop('readonly', false);
+                $("#"+upper_gap_id).val("").prop('readonly', false);
+            }
+          });
+            $('input[id $= -inactive_faculty_flag]').bind("click",function () {
+
+            var id=this.id;
+	    var String = id.split(/[--]/);
+            var lower_gap_id="id_form-"+String[1]+"-lower_tech_interval_gap";
+            var upper_gap_id="id_form-"+String[1]+"-upper_tech_interval_gap";    
+            if($(this).is(':checked') == true)
+            {
+
+                $("#"+lower_gap_id).val("").prop('readonly', true);
+                $("#"+upper_gap_id).val("").prop('readonly', true);
+            }
+            else
+            {
+                $("#"+lower_gap_id).val("").prop('readonly', false);
+                $("#"+upper_gap_id).val("").prop('readonly', false);
+            }
+          });
+          $('input[id $= -lower_tech_interval_gap]').bind('keyup change', function () {
+	        var id=this.id;
+       	        var val = this.value;
+	        var String = id.split(/[--]/);
+		var current_flag_id="id_form-"+String[1]+"-current_faculty_flag";
+                var inactive_faculty_id="id_form-"+String[1]+"-inactive_faculty_flag";
+
+                if(val!="")
+                {
+                    $("#"+current_flag_id).attr("disabled", true);
+                    $("#"+inactive_faculty_id).attr("disabled", true);
+                }
+                else
+                {
+                    $("#"+current_flag_id).attr("disabled", false);
+                    $("#"+inactive_faculty_id).attr("disabled", false);
+                }
+                
+                
+
+          });
+           $('input[id $= -upper_tech_interval_gap]').bind('keyup change', function () {
+	        var id=this.id;
+       	        var val = this.value;
+	        var String = id.split(/[--]/);
+		var current_flag_id="id_form-"+String[1]+"-current_faculty_flag";
+                var inactive_faculty_id="id_form-"+String[1]+"-inactive_faculty_flag";
+                var lower_gap_id="id_form-"+String[1]+"-lower_tech_interval_gap";
+                var upper_gap_id="id_form-"+String[1]+"-upper_tech_interval_gap";    
+                if(val!="")
+                {
+                    $("#"+current_flag_id).attr("disabled", true);
+                    $("#"+inactive_faculty_id).attr("disabled", true);
+                }
+                else
+                {
+                    $("#"+current_flag_id).attr("disabled", false);
+                    $("#"+inactive_faculty_id).attr("disabled", false);
+                }
+
+          });
+          
+          $('input[id $= -lower_tech_interval_gap]').bind('keyup change blur', function () {
+	        var id=this.id;
+       	        var val = this.value;
+	        var String = id.split(/[--]/);
+		var lower_gap_id="id_form-"+String[1]+"-lower_tech_interval_gap";
+                var upper_gap_id1="id_form-"+(String[1]-1)+"-upper_tech_interval_gap";
+                var upper_gap_id2="id_form-"+String[1]+"-upper_tech_interval_gap";
+
+		var lower=$("#"+lower_gap_id).val();
+                var upper1=$("#"+upper_gap_id1).val();
+                var upper2=$("#"+upper_gap_id2).val();
+                if(Number(lower)!="" && Number(upper1)!="")
+                {
+			 
+		        if(Number(lower)<Number(upper1))
+		        {
+				
+				alert("Bucket entry not saved as it as an overlap with another existing bucket");
+				$("#"+lower_gap_id).focus();
+				return false;
+				
+			
+		        }
+		       
+                }
+                if(Number(lower)!="" && Number(upper2)!="")
+                {
+			if(Number(upper2)<Number(lower))
+			{	
+				alert("Please check the Lower and Upper values");
+				$("#"+lower_gap_id).focus();
+				return false;
+			
+			}
+		}
+		
+                
+
+          });
+          $('input[id $= -upper_tech_interval_gap]').bind('keyup change blur', function () {
+          
+	        var id=this.id;
+       	        var val = this.value;
+	        var String = id.split(/[--]/);
+                
+		var lower_gap_id1="id_form-"+(parseInt(String[1])+1)+"-lower_tech_interval_gap";
+                var upper_gap_id="id_form-"+(String[1])+"-upper_tech_interval_gap";
+		var lower_gap_id2="id_form-"+(parseInt(String[1]))+"-lower_tech_interval_gap";
+		var lower1=$("#"+lower_gap_id1).val();
+		var lower2=$("#"+lower_gap_id2).val();
+                var upper=$("#"+upper_gap_id).val();
+                if(Number(lower1)!="" && Number(upper)!="")
+                { 
+               
+		        if(Number(lower1)<Number(upper))
+		        {	
+				alert("Bucket entry not saved as it as an overlap with another existing bucket");
+				$("#"+upper_gap_id).focus();
+				return false;
+			
+		        }
+                }
+                if(Number(lower2)!="" && Number(upper)!="")
+                { 
+               
+		        if(Number(upper)<Number(lower2))
+		        {	
+				alert("Please check the Lower and Upper values");
+				$("#"+upper_gap_id).focus();
+				return false;
+			
+		        }
+                }
+                
+
+          });
+          
+          
+          });
+          })(django.jQuery);
+          </script>
+      {% endblock %}
+{% block submit_buttons_bottom %}
+<div class="submit-row"><input type="submit" value="Submit" class="default" name="_save"></div>
+{% endblock %}
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

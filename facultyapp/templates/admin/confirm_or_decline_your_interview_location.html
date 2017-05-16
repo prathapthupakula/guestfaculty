@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+<script>
+  $(function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "2016:2025",
+      // You can put more options here.
+
+
+    });
+  });
+
+  </script>
+
+<h1>Your Interview Details Below. Please Confirm or Decline your Interview Venue and Timing :</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+
+  {{ form.as_p }}
+
+    <ul>
+    {% for candidate in candidates %}
+       {% if candidate.application_status == 'In Process' %}
+	   <li> {{ candidate }} </li>
+	   <input type="hidden" name="_selected_action" value="{{ candidate.pk }}">
+	   <input type="hidden" name="record_exists" id="record_exists" value='true'>
+	   {% endif %}
+    {% endfor %}
+	</ul>
+    <input type="hidden" name="action" value="confirm_or_decline_your_interview_location" />
+    <input type="submit" name="update" value="UPDATE INTERVIEW AND TIMING RESPONSES" />
+    <input type="button" value="Back" onClick="history.go(-1);return true;">
+
+
+</form>
+<script>
+if (!document.contains(document.getElementById("record_exists"))) {
+            document.getElementById("submitbutton").remove();
+			document.getElementById('usermsg').style.display = 'block';
+}
+</script>
+{% endblock %}
+

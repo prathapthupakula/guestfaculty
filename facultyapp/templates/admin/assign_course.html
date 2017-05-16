@@ -25,7 +25,7 @@
 
     <ul>
     {% for course in courses %}
-       {% if not course.assigned_count >= course.max_faculty_count %}
+       {% if not course.assigned_count|add:course.accepted_count >= course.max_faculty_count %}
 	   <li> {{ course }} </li>
 	   <input type="hidden" name="_selected_action" value="{{ course.pk }}">
 	   <input type="hidden" name="record_exists" id="record_exists" value='true'>

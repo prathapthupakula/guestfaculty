@@ -34,13 +34,11 @@ form h4 {
     padding: 0 !important;
     border: none !important;
 }
-
 label {
-    font-weight: normal !important;
+    font-weight: normal;
     color: #666;
     font-size: 13px;
 }
-
 .required label, label.required {
     font-weight: bold !important;
     color: #333 !important;
@@ -506,3 +504,4 @@ form .related-widget-wrapper ul {
 .clearable-file-input input {
     margin-top: 0;
 }
+

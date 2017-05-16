@@ -1,0 +1,23 @@
+{% extends "admin/import_export/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools %}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        alert("jjejeej");
+    });
+})(django.jQuery);
+
+</script>
+    {% if has_add_permission %}
+        <ul class="grp-object-tools">
+            {% block object-tools-items %}
+                <li><a href="export/{{ cl.get_query_string }}" class="export_link">{% trans "Export" %}</a></li>
+                <li><a href="import/{{ cl.get_query_string }}" class="import_link">{% trans "Import" %}</a></li>
+            {% endblock %}
+        </ul>
+    {% else %}
+    {{ block.super }}
+    {% endif %}
+{% endblock %}

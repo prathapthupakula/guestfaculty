@@ -126,7 +126,10 @@ class PlanningNumbers(resources.ModelResource):
 	fields = ('location','program','course','semester','plan_status','faculty_in_database','total_faculty_required','to_be_recruited_with_buffer','version_number','current_plan_flag')	
 	
 class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.ModelAdmin):
-    #change_form_template = 'admin/change_form.html'
+    #change_form_ltemplate = 'admin/change_form.html'
+    class Media:
+        static_url = getattr(settings, 'STATIC_URL', '/static/') 
+        js = [ static_url+'admin/js/list_filter_collaps.js', ]
     resource_class = PlanningNumbers
     form = GuestFacultyPlanningNumbersAdminForm
 
@@ -141,7 +144,7 @@ class GuestFacultyPlanningNumbersAdmin(DjangoObjectActions,ExportMixin,admin.Mod
     list_display = ('id','location','program','course','semester','plan_status','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer','faculty_in_database','total_faculty_required')
     fields = (('location','program','course'),('semester','discipline'),('faculty_in_database','total_faculty_required'),('buffer_type','buffer_number','faculty_to_be_recruited','to_be_recruited_with_buffer'),'planning_comments',('program_coordinator','plan_status'),'version_number')
     readonly_fields = ('faculty_to_be_recruited','current_plan_flag','to_be_recruited_with_buffer','buffer_number','version_number','plan_status', 'program_coordinator','created_by','created_on','version_number')
-    list_filter = ('program','course',CurrentSemesterFilter,'current_plan_flag','plan_status',('location',admin.RelatedOnlyFieldListFilter))
+    list_filter = ('program','course__course_name',CurrentSemesterFilter,'current_plan_flag','plan_status',('location',admin.RelatedOnlyFieldListFilter))
         
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
@@ -385,6 +388,9 @@ class  CurrentSemesterFilter1(SimpleListFilter):
         else:
             return qs
 class PlanningWindowStatusAdmin(admin.ModelAdmin):
+    class Media:
+        static_url = getattr(settings, 'STATIC_URL', '/static/') 
+        js = [ static_url+'admin/js/list_filter_collaps.js', ]
     form=PlanningWindowStatusAdminForm   
     model = PlanningWindowStatus
     list_display = ('semester','program','status','start_date','end_date','last_updated_date','updated_by')
@@ -484,3 +490,68 @@ class CurrentSemesterAdmin(admin.ModelAdmin):
            
 
 admin.site.register(CurrentSemester, CurrentSemesterAdmin)
+
+
+from .models import DesignationResource
+
+class DesignationResourceAdmin(resources.ModelResource):
+    class Meta:
+        model = DesignationResource
+        fields = ('id','name',)
+        import_id_fields = ['id','name']
+
+from .models import Designation
+
+class DesignationAdmin(admin.ModelAdmin):
+    class Media:
+        static_url = getattr(settings, 'STATIC_URL', '/static/') 
+        js = [ static_url+'admin/js/list_filter_collaps.js', ]
+    fields=('name','company_name','role')
+    list_display=('d_id','name','company_name','role')
+    list_filter=('role','company_name',)
+
+       
+
+admin.site.register(Designation,DesignationAdmin)
+
+
+from .models import GfPlanExample
+
+class GfPlanExampleAdmin(ImportExportMixin,admin.ModelAdmin):
+    class Media:
+   	static_url = getattr(settings, 'STATIC_URL', '/static/') 
+    	js = [ static_url+'admin/js/list_filter_collaps.js', ]
+    model= GfPlanExample
+    resource_class = DesignationResourceAdmin
+    fields=('name','mobilenum','location','email','designation')
+    list_display=('name','mobilenum','location','email','designation')
+    list_filter=('location','designation')
+    search_fields=('location','designation__role',)
+    list_display_links=None
+    list_editable = ('name','location','email')
+
+   
+
+admin.site.register(GfPlanExample,GfPlanExampleAdmin)
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

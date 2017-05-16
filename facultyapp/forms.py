@@ -2,7 +2,7 @@ from django import forms
 from django.forms import Textarea
 from django.forms.models import inlineformset_factory
 
-from .models import Location, GuestFacultyCandidate, Program, CandidateQualification
+from .models import Location, GuestFacultyCandidate, Program, CandidateQualification,GuestFaculty,Coordinator
 
 def upper_case_name(obj):
     return ("%s %s" % (obj.location_state, obj.location_country)).upper()
@@ -19,4 +19,9 @@ class GuestFacultyForm(forms.ModelForm):
         widgets = {
             'address1': Textarea(attrs={'cols': 20, 'rows': 5}),
         }
+
+class AssignCourseForm(forms.Form):
+    guestfaculty = forms.ModelChoiceField(label='Guest Faculty',queryset=GuestFaculty.objects.all())
+
+			
 

@@ -13,10 +13,12 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 import os
+from django.core.urlresolvers import reverse_lazy
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+#AUTH_USER_MODEL = 'CustomUser'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -51,6 +53,9 @@ INSTALLED_APPS = (
     'django_object_actions',
     'flat',
 )
+#AUTH_USER_MODEL = 'facultyapp.Employee'
+#AUTH_USER_MODEL = 'facultyapp.MyUser'
+#AUTH_USER_MODEL = 'auth.User'
 
 # Settings for AllAuth Application for Signup
 SITE_ID = 1
@@ -58,7 +63,10 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED=True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USERNAME_REQUIRED=False
-LOGIN_REDIRECT_URL = "/application"
+LOGIN_REDIRECT_URL = "/candidateapplication"
+LOGIN_URL = reverse_lazy('my_app.views.sign_in')
+
+#AUTH_USER_MODEL = 'guestfaculty.CustomUser'
 
 
 MIDDLEWARE_CLASSES = (
@@ -110,6 +118,7 @@ WSGI_APPLICATION = 'guestfaculty.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+DEFAULT_DB_ALIAS = 'default'
 
 DATABASES = {
  'default': { 
@@ -132,8 +141,8 @@ USE_I18N = False
 USE_L10N = False
 
 USE_TZ = False
-
-#MEDIA_URL = "http://192.168.1.177/django/guestfaculty/"
+MEDIA_ROOT = os.path.join(BASE_DIR, '/')
+MEDIA_URL = "http://192.168.1.177/django/guestfaculty"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = '/static/'
@@ -144,6 +153,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'local_static')
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'reporting@varnatech.com'
+#EMAIL_HOST_USER = 'reporting@bits-pilani.com'
 EMAIL_HOST_PASSWORD = '$epo1234'
 EMAIL_USE_SSL = True
 
@@ -161,7 +171,10 @@ LDAP_SERVER = 'ldap://172.22.2.87/'
 LDAP_BASE_DN = 'ou=people,dc=bits-pilani,dc=ac,dc=in'
 
 #CUSTOM
-APPLICATION_URL = 'http://gf-varnatech.ka-sites.space/application/'
+APPLICATION_URL = 'http://192.168.1.177:8080/candidateapplication/'
+APPLICATION_URL1 = 'http://192.168.1.177:8080/application/'
+
+
 
 try:
     from local_settings import *

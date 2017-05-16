@@ -4,10 +4,10 @@ from django.db import models
 import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group 
-from facultyapp.models import GuestFacultyCandidate, GuestFaculty, GuestFacultyCourseOffer, GuestFacultyQualification, FacultyClassAttendance
+from facultyapp.models import GuestFacultyCandidate, GuestFaculty, GuestFacultyCourseOffer, GuestFacultyQualification, FacultyClassAttendance,GuestFacultyInterview
 from gfplan.models import PlanningWindowStatus
-from timetable.models import SemesterTimetableEditWindow  
-from timetable.models import SemesterPlanDetail
+from timetable.models import SemesterTimetableEditWindow
+from timetable.models import SemesterPlanDetail,SemesterMilestonePlanMaster
 
 
 class GFCandidateListReport(GuestFacultyCandidate):
@@ -46,9 +46,22 @@ class PlanningWindowStatusReport(PlanningWindowStatus):
         proxy = True
 class SemesterPlanDetailReport(SemesterPlanDetail):
     class Meta:
+        verbose_name, verbose_name_plural = u"Milestone Plan Report", u" New Milestone Plan Report"
+        proxy = True
+class SemesterMilestonePlanMasterReport(SemesterMilestonePlanMaster):
+    class Meta:
         verbose_name, verbose_name_plural = u"Timetable and Milestones Date report", u"Timetable and Milestones Date report"
         proxy = True
 class SemesterTimetableEditWindowReport(SemesterTimetableEditWindow):
     class Meta:
         verbose_name, verbose_name_plural = u"Semester Timetable Edit Windows", u"Semester Timetable Edit Windows"
         proxy = True
+class GuestFacultyDegreeDisciplineReport(GuestFaculty):
+    class Meta:
+        verbose_name, verbose_name_plural = u"Guest Faculty by Degree and Discipline", u"Guest Faculty by Degree and Discipline"
+        proxy = True
+class GuestFacultyInterviewReport(GuestFacultyInterview):
+    class Meta:
+        verbose_name, verbose_name_plural = u"Guest Faculty Candidate Interview Schedule", u"Guest Faculty Candidate Interview Schedule"
+        proxy = True
+

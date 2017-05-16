@@ -36,6 +36,7 @@
 {% endblock %}
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
+   <div></div>
 {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
 {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
 {% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
@@ -76,6 +77,50 @@
                     e.preventDefault();
                     showRelatedObjectLookupPopup(this);
                 });
+                
+               $('.field-highest_qualification input:checkbox').click(function() {
+    $('.field-highest_qualification input:checkbox').not(this).prop('checked', false);
+		 $('.results').doubleScroll();
+});  
+
+
+$('input[id $= -percent_marks_cpi_cgpa]').bind('keyup change', function () {
+
+	        var id=this.id;
+       	        var val = this.value;
+	        var String = id.split(/[--]/);
+
+		
+		var maxcgpa_id="id_guestfacultyqualification_set-"+String[1]+"-max_marks_cpi_cgpa";
+                $("#"+maxcgpa_id).attr("readonly", true);
+                if(val==" " || val<=0)
+                {
+                    $("#"+maxcgpa_id).val(0);
+                }
+	        else if(val<=10)
+	        {
+			$("#"+maxcgpa_id).val(10);
+	        }
+	        else
+	        {
+			$("#"+maxcgpa_id).val(100);
+	        }
+});
+            $('input[id $= -current_faculty_flag]').click(function () {
+
+            var id=this.id;
+	    var String = id.split(/[--]/);
+            var lower_gap_id="id_form-"+String[1]+"-lower_tech_interval_gap";    
+            if($(this).is(':checked') == true)
+            {
+
+                $("#"+lower_gap_id).val("").prop('readonly', true);
+            }
+            else
+            {
+                $("#"+lower_gap_id).prop('readonly', false);
+            }
+          });
             {% if adminform and add %}
                 $('form#{{ opts.model_name }}_form :input:visible:enabled:first').focus()
             {% endif %}

@@ -120,3 +120,66 @@ class CurrentSemester(models.Model):
 		
     def __str__(self):             
         return str(self.currentsemester)
+
+
+class DesignationResource(models.Model):
+    id = models.AutoField(primary_key=True,editable=False)
+    name = models.CharField(max_length=225,)
+  
+    class Meta:
+        managed = False
+        db_table = 'design_resource'
+        verbose_name = 'resource '
+        verbose_name_plural ='Resource example'
+
+
+class Designation(models.Model):
+    d_id = models.AutoField(primary_key=True,editable=False)
+    name = models.CharField(max_length=225,)
+    company_name=models.CharField(max_length=225,)
+    role= models.CharField(max_length=225,)
+    
+    class Meta:
+        managed =False
+        db_table='gfdesignation'
+        verbose_name='Designation example'
+        verbose_name_plural='gfplan designation example'
+    
+    def __str__(self):
+        return str(self.role)
+
+
+
+
+class GfPlanExample(models.Model):
+    id=models.AutoField(primary_key=True,editable = False)
+    name = models.CharField(max_length = 225,)
+    mobilenum = models.CharField( max_length =225,)
+    email=models.CharField(max_length = 225)
+    location = models.CharField(max_length = 225)
+    designation=models.ForeignKey('Designation',)
+
+    class Meta:
+        managed=False
+        db_table='gfplanexample'
+        verbose_name='example list'
+        verbose_name_plural= 'Exapmple list details'
+     
+    def __str__(self):
+        return str(self.name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

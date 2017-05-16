@@ -449,6 +449,9 @@ input, textarea, select, .form-row p, form .button {
 
 textarea {
     vertical-align: top !important;
+	width:20em;
+	height:100px;
+	
 }
 
 input[type=text], input[type=password], input[type=email], input[type=url],
@@ -1914,4 +1917,19 @@ h5.widget-title a{
 
 .widget-body {
     background-color: #FFF
+}
+
+td.field-percent_marks_cpi_cgpa input, td.field-max_marks_cpi_cgpa input, td.field-normalized_marks_cpi_cgpa input{
+	width:50px;
+}
+td.field-qualification_discipline div select{
+	width:220px !important;
+}
+td.field-semestermilestoneplanmaster_batch, th.column-semestermilestoneplanmaster_batch div.text{
+	width:200px;
+}
+.field-program_code1 label, .field-program_code1 p {
+    font-weight: bold ! important;
+    color: #333 ! important;
+    font-size: 15px ! important;
 }

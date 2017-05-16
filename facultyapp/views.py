@@ -7,13 +7,14 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from .models import GuestFacultyCandidate, CandidateQualification
 from .forms import GuestFacultyForm, QualificationFormSet
 
 def index(request):
     #return render(request, 'facultyapp/home.html')
-    return render_to_response('facultyapp/home.html', context_instance=RequestContext(request))
+    return render_to_response('facultyapp/home.html', context_instance=RequestContext(request))                                                                                                                                                                                                                                                                                                                          
 
 
 	
@@ -43,3 +44,5 @@ def get_candidate(request):
         "form": form,
         "qualification_formset": qualification_formset,
     }, context_instance=RequestContext(request))
+
+

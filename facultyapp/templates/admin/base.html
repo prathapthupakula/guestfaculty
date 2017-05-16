@@ -1,17 +1,30 @@
 {% load i18n admin_static %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
-<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
-<head>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}><head>
 <title>{% block title %}{% endblock %}</title>
-
 {% block extrastyle %}{% endblock %}
+
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/customadmin.css" %}{% endblock %}" />
+<script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.doubleScroll.js"></script>
+
 <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% static "admin/css/ie.css" %}{% endblock %}" /><![endif]-->
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
 <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+
 <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
-{% block extrahead %}{% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript">
+(function(jQuery) {
+jQuery(document).ready(function(){
+  var jq=jQuery(".results").doubleScroll();
+});
+})(jQuery);
+</script>
+{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+
 </head>
 {% load i18n %}
 
@@ -117,3 +130,4 @@
 
 </body>
 </html>
+
