@@ -53,7 +53,6 @@ conn="mysql+pymysql://root:"+''+"@localhost/test_django"
 engine = create_engine(conn, pool_size=20, max_overflow=0)
 cnxn = connectEngine(engine)
 # cnxn.query("select * from testapp")
-# please test the connection
 class Data:
     def get(self):
         query = cnxn.execute("select * from testapp")  # This line performs query and returns json result
